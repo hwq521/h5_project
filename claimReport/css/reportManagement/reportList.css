@@ -1,0 +1,102 @@
+.card-group .card-item {
+    background-color: #fff;
+    border-radius: 0.12rem;
+    margin-top: 0.2rem;
+}
+
+.card-group .card-item-top {
+    position: relative;
+    display: flex;
+    align-items: center;
+    line-height: 1.8;
+    overflow: hidden;
+}
+
+.card-group .card-item-top,
+.card-group .card-item-bottom,
+.card-group .card-item-btn {
+    padding: 0.18rem 0.2rem;
+}
+
+.card-group .card-title {
+    flex: 1;
+    line-height: 1.8;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 0.3rem;
+}
+
+.card-group .card-date {
+    font-size: 0.24rem;
+    color: #D63131;
+}
+
+.card-group .card-state {
+    position: absolute;
+    right: -0.08rem;
+    top: -0.04rem;
+    width: 1.6rem;
+    height: 0.65rem;
+    text-align: center;
+    line-height: 0.6rem;
+    font-size: 0.28rem;
+    color: #fff;
+    text-indent: .5em;
+}
+
+.card-group .card-state.state1 {
+    background: url(../../img/state1.png) center center/contain no-repeat;
+}
+
+.card-group .card-state.state2 {
+    background: url(../../img/state2.png) center center/contain no-repeat;
+}
+
+.card-group .card-state.state3 {
+    background: url(../../img/state3.png) center center/contain no-repeat;
+}
+
+.card-group .card-item-bottom {
+    border-top: 0.02rem solid #CCCCCC;
+    position: relative;
+}
+
+.card-group .card-info-group {
+    font-size: 0;
+    line-height: 1.8;
+}
+
+.card-group .card-info-group>li {
+    font-size: 0.24rem;
+    display: inline-flex;
+    width: 100%;
+}
+
+.card-group .card-info-group .label {
+    flex: 0 0 1.2rem;
+    text-align: right;
+    color: #999;
+    margin-right: 0.2rem;
+}
+
+.card-group .card-info-group .value {
+    flex: 1;
+    color: #1A1A1A;
+    word-break: break-all;
+}
+
+.card-group .card-item-btn {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #eee;
+}
+
+.card-group .card-item-btn_r {
+    flex: 1;
+    text-align: right;
+}
+
+.card-group .card-item-btn .btn {
+    width: 1.4rem;
+}

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>车辆报案</title>
+    <meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name="viewport" id="viewport" />
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="keywords" content="">
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <link rel="stylesheet" href="../../css/new-common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/customer-form.css" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/common.js?v=1.01"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+    <style>
+        .cell-icon {
+            width: 0.4rem;
+            height: 0.4rem;
+            margin-right: 0.2rem;
+        }
+        
+        .form-group .van-cell-group {
+            background-color: transparent !important;
+        }
+        
+        .form-group .van-cell {
+            border-radius: 0.1rem;
+        }
+        
+        .form-group .van-cell__title {
+            flex: 0 0 1.3rem !important;
+        }
+        
+        .download-file>.form-item:nth-child(2):before {
+            left: 0 !important;
+            right: 0 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <step :steptype="1" :step="1"></step>
+        <div class="form-group">
+            <van-cell-group>
+                <van-cell title="保险公司" :value="column.text||'请选择保险公司'" @click="showPicker = true" center is-link>
+                    <template #icon>
+              <img class="cell-icon" src="../../img/report_icon_10.png" >
+            </template>
+                </van-cell>
+            </van-cell-group>
+        </div>
+        <div class="form-group">
+            <van-cell-group>
+                <van-cell title="保险公司" center>
+                    <template #icon>
+              <img class="cell-icon" src="../../img/report_icon_11.png" >
+            </template>
+                    <template #default>
+                        <van-radio-group v-model="result" direction="horizontal" icon-size="14px">
+                            <van-radio name="a">已报案</van-radio>
+                            <van-radio name="b">未报案</van-radio>
+                          </van-radio-group>
+            </template>
+                </van-cell>
+            </van-cell-group>
+        </div>
+        <div class="form-group">
+            <van-cell-group>
+                <van-cell title="报案途径" center>
+                    <template #icon>
+              <img class="cell-icon" src="../../img/report_icon_1.png" >
+            </template>
+                    <template #default>
+                        <van-radio-group v-model="result1" direction="horizontal" icon-size="14px">
+                            <van-radio name="a">平台报案</van-radio>
+                            <van-radio name="b">保险公司报案</van-radio>
+                          </van-radio-group>
+            </template>
+                </van-cell>
+            </van-cell-group>
+        </div>
+        <div class="form-group download-file">
+            <div class="form-item form-item-center">
+                <img src="../../img/report_icon_3.png" class="form-title-icon">
+                <div class="form-title">索赔申请</div>
+            </div>
+            <div class="form-item">
+                <div class="value over-hidden">《个人客户税收居民身份声明文件人客户税…</div>
+                <button class="btn btn-s btn-primary">下载</button>
+            </div>
+            <div class="form-item">
+                <div class="value over-hidden">《个人客户税收居民身份声明文件人客户税…</div>
+                <button class="btn btn-s btn-primary">下载</button>
+            </div>
+            <div class="form-item">
+                <div class="value over-hidden">《个人客户税收居民身份声明文件人客户税…</div>
+                <button class="btn btn-s btn-primary">下载</button>
+            </div>
+            <div class="form-item">
+                <div class="value over-hidden">《个人客户税收居民身份声明文件人客户税…</div>
+                <button class="btn btn-s btn-primary">下载</button>
+            </div>
+        </div>
+        <div class="btn-form-area">
+            <button class="btn btn-l btn-primary">下一步</button>
+        </div>
+        <vant-picker v-model="showPicker" :columns="columns" :column.sync="column"></vant-picker>
+    </div>
+    <script src="../../js/vueComponents/step.component.js"></script>
+    <script src="../../js/vueComponents/vantPicker.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    result: [],
+                    result1: [],
+                    showPicker: false,
+                    column: {},
+                    columns: [{
+                        text: '公司1',
+                        value: '1'
+                    }, {
+                        text: '公司2',
+                        value: '2'
+                    }, {
+                        text: '公司3',
+                        value: '3'
+                    }, ]
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

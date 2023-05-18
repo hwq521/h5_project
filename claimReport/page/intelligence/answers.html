@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>智能核保-选择疾病</title>
+	<meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name="viewport"
+		id="viewport" />
+	<meta name="format-detection" content="telephone=yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta http-equiv="keywords" content="">
+	<link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+	<link rel="stylesheet" href="../../css/intelligence/index.css">
+	<script src="../../js/zepto.min.js"></script>
+	<script src="../../js/base.js?v=20200915"></script>
+	<script src="../../js/common.js?v=1.01"></script>
+	<script src="../../js/showText.js"></script>
+	<script src="../../js/init_750.js"></script>
+	<script src="../../js/common_utils.js"></script>
+	<link rel="stylesheet" href="../../css/vant.css" />
+
+	<!-- 引入 Vue 和 Vant 的 JS 文件 -->
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+	<script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+	<script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+	<script src="../../js/axios/package-axios.js"></script>
+</head>
+
+<body>
+	<div id="app">
+		<template v-for="(item,key) in questionList">
+			<div class="question-group">
+				<div class="category-name">{{Utils.numberToChinese(key+1)}}、【{{item.parentName}}】{{item.dName}}
+				</div>
+				<template v-for="(iitem,kkey) in item.currentAnswer">
+					<div class="question-item" v-if="item.qa[iitem]">
+						<div class="question">
+							{{kkey+1}}、{{item.qa[iitem].question}}
+						</div>
+						<van-radio-group v-model="item.qa[iitem].activeAnswer"
+							@change="radioChange($event,key,kkey,iitem)">
+							<van-radio :name="kkkey" v-for="(iiitem,kkkey) in item.qa[iitem].answersArr"
+								:key="kkkey+kkey+key" @click="radioClick">
+								{{iiitem}}
+							</van-radio>
+						</van-radio-group>
+					</div>
+				</template>
+			</div>
+		</template>
+		<div class="btn-area">
+			<van-button type="info" @click="toSubmit" :disabled="loading">{{btnCH}}</van-button>
+		</div>
+
+
+		<!-- 加载中 -->
+		<van-overlay :show="loading">
+			<van-loading size="0.6rem" color="#fff" vertical>加载中...</van-loading>
+		</van-overlay>
+	</div>
+	<script src="./diseaseData.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		new Vue({
+			el: '#app',
+			data() {
+				return {
+					isClick: true, // 点击状态（防止change事件打乱正常逻辑）
+					loading: false, // 加载状态
+					isLast: false, // 是否是最后一个被保人
+					isJumpChuze: false, // 是否跳转到提示除责页面
+					btnCH: '', // 按钮文字
+					currentPerson: 0, // 当前被保人的索引
+					// 问题列表
+					questionList: [{
+						currentAnswer: [], // 当前展示的问题索引值
+						qa: [{
+							question: '', // 问题汉字
+							answerArr: []
+						}]
+					}],
+					answersType: answersType // 答案选项
+				}
+			},
+			created() {
+				this.getQuestionData()
+			},
+			methods: {
+				getQuestionData: function () {
+					this.loading = true;
+					console.time('初始化数据花费')
+					var result = JSON.parse(JSON.stringify(diseaseData))
+					var newResult = []
+					var getData = getLocalData.getData()
+					var getPerson = getLocalData.getPerson();
+					var item = null;
+					getData.map(function (i, k) {
+						item = null;
+						item = result[i.k].children[i.kk];
+						item['parentName'] = result[i.k].dName; // 大类疾病名称
+						item['currentAnswer'] = item.currentAnswer || [0]; // 当前要遍历的问题索引数组
+						item['ispass'] = true; // 主要用于判断当前问题的拒保 {true}[通过] {false}[不通过]
+						item.qa.map(function (ii, kk) {
+							ii['activeAnswer'] = ''; // 当前问题选中项
+							if (!isNaN(String(ii.answersType))) {
+								ii['answersArr'] = JSON.parse(JSON.stringify(answersType[ii
+									.answersType])); // 当前答案的数组
+							} else {
+								ii['answersArr'] = JSON.parse(JSON.stringify(ii.answersArr));
+							}
+							// 判断当前答案是否为true，并且数组长度必须等于2才能插入其他答案字符
+							if (ii.otherAnswer && ii.answersArr.length === 2) {
+								ii.answersArr.push(ii.answerWord);
+							}
+							return ii
+						})
+						newResult.push(item)
+					})
+
+					var getCurrentPerson = getLocalData.getCurrentPerson();
+					var isLast = getCurrentPerson === (getPerson.length - 1);
+					this.isLast = isLast;
+					this.btnCH = !isLast ? '继续选择被保人' : '提交问卷';
+					this.questionList = newResult;
+					console.log(newResult)
+					this.currentPerson = getCurrentPerson;
+					console.timeEnd('初始化数据花费')
+					this.loading = false;
+				},
+				radioClick: function () {
+					this.isClick = true;
+				},
+				// vall[单选框变化的值] key[第一层索引值] key[第二层索引值]
+				radioChange: function (vall, key, kkey, kkkey) {
+					if (!this.isClick) return;
+					var currentItem = this.questionList[key];
+					kkkey = Number(kkkey);
+					var val = vall;
+					// 当前数据不是混合型问题并且数据等于2的话，那值强制赋值为-1
+					if (!currentItem.mixedQuestion && val === 2) {
+						val = -1
+						// 如果值为空直接打断
+					}
+
+					var currentQuestionStep = currentItem.questionStep;
+					var current = `${kkkey}/${val}`; // 拼接出key/val 格式的字符串进行匹配
+					var currentQuestionLen = currentItem.qa.length; // 当前问题的长度
+					var selectKey = null; // 当前选中的所在当前步骤中第一层的索引值
+					var selectKKey = null; // 当前选中的所在当前步骤中第二层的索引值
+					var currentQuestionIndexArr = []; // 当前步骤的所有索引值[[0,1,2],[0,1,2]]
+					var isLast = {
+						state: false,
+						index: 0
+					};
+					// 分解并筛选是否在currentQuestionStep里
+					currentQuestionStep = currentQuestionStep.map(function (i, k) {
+						i = i.split(',');
+						currentQuestionIndexArr.push([])
+						i.map(function (ii, kk) {
+							if (ii === current) {
+								selectKKey = kk
+								selectKey = k;
+							}
+							var iiSplit = ii.split('/')
+							currentQuestionIndexArr[k].push(iiSplit[0])
+							if (!isLast.state) {
+								// 判断是否存在强制结束下一个问题，并存入当前索引值为下一步判断做铺垫
+								isLast.state = iiSplit[2] && iiSplit[2] === '#';
+								isLast.index = kk;
+							}
+						})
+						return i
+					})
+
+					// 判断选择的值和 questionStep 数组里是否匹配成功
+					if (selectKey !== null && selectKKey !== null) {
+						// 成功
+						var nextStep = currentQuestionStep[selectKey][selectKKey + 1]; // 下一个步骤的值
+						// 判断 下一个问题情况是否存在
+						if (nextStep) {
+							// 存在插入下一个问题情况
+							nextStep = nextStep.split('/')
+							if (nextStep.length > 1) {
+								// 如果当前步骤为1种情况以上，直接把当前数据后面的数据全部切掉，再push数据
+								if (currentQuestionStep.length > 1) {
+									currentItem.currentAnswer.map(function (i, k) {
+										if (kkey < k && k > 0) {
+											currentItem.qa[i].activeAnswer = '';
+										}
+									})
+									this.questionList[key].currentAnswer.qa = currentItem.qa; // 清空除当前点击的其他答案选中的值
+									this.questionList[key].currentAnswer = currentItem.currentAnswer.slice(0,
+										kkey + 1); // 切掉其他的数据
+								}
+								this.questionList[key].currentAnswer.push(Number(nextStep[0]))
+							}
+						} else {
+							// 不存在则判断是否是最后一个
+							if (kkkey !== isLast.index || !isLast.state) {
+								if (this.questionList[key].currentAnswer.length < currentQuestionStep[selectKey]
+									.length) {
+									this.questionList[key].currentAnswer.push(currentQuestionStep[selectKey]
+										.length)
+								}
+							}
+						}
+					} else {
+						// 失败
+						var currentAnswer = currentItem.currentAnswer
+						if (currentAnswer.length > 1) {
+							if (this.questionList[key].currentAnswer[kkey + 1]) {
+								currentItem.currentAnswer.map(function (i, k) {
+									if (kkey < k && k > 0) {
+										currentItem.qa[i].activeAnswer = '';
+									}
+								})
+
+
+								this.questionList[key].currentAnswer.qa = currentItem.qa; // 清空除当前点击的其他答案选中的值
+								this.questionList[key].currentAnswer = currentItem.currentAnswer.slice(0, kkey +
+									1); // 切掉其他的数据
+							}
+						}
+					}
+					this.isClick = false;
+					this.checkJubao(key, kkey, kkkey, val); // 检查是否拒保
+				},
+				// 检查是否有拒保项 有则弹窗提示
+				checkJubao: function (key, kkey, kkkey, val) {
+					var current = `${kkkey}/${val}`;
+					var currentItem = this.questionList[key];
+					var currentJubao = currentItem.jubao;
+					if (currentJubao.indexOf(current) > -1) {
+						vant.Dialog.alert({
+							title: '提示',
+							message: '非常抱歉，根据您的健康告知，您未能通过本次投保审核，是否重新回答问卷？',
+							showCancelButton: true,
+						}).then(() => {
+							// on close
+						}).catch(() => {
+							location.href = './index.html'
+							console.log('取消')
+						});
+						this.questionList[key].ispass = false // 不通过
+					} else {
+						this.questionList[key].ispass = true // 通过
+					}
+
+				},
+				// 验证是否都已经选择过
+				submitVail: function (data) {
+					console.log(data);
+					var errorMsg = '';
+					var errorMsg1 = '';
+					data.map(function (i, k) {
+						i.currentAnswer.map(function (ii, kk) {
+							if (i.qa[ii].activeAnswer === '') {
+								errorMsg += '第' + Utils.numberToChinese(k + 1) + '大项中的' + (kk +
+									1) + '小项未选择、'
+							}
+						})
+						if (!i.ispass) {
+							errorMsg1 += '第' + Utils.numberToChinese(k + 1) + '大项疾病、'
+						}
+					})
+					if (errorMsg) {
+						errorMsg = errorMsg.slice(0, errorMsg.length - 1) + '！！！'
+					} else if (errorMsg1) {
+						errorMsg = errorMsg.slice(0, errorMsg.length - 1) + '未能通过本次投保审核，请重新回答问卷！！！'
+					}
+					return errorMsg
+				},
+				// 点击提交按钮
+				toSubmit: function () {
+					var isErr = this.submitVail(this.questionList);
+					if (isErr) {
+						vant.Dialog.alert({
+							title: '提示',
+							message: isErr,
+						}).then(() => {
+							// on close
+						});
+					} else {
+						var param = this.dataSplicing(this.questionList);
+						// console.log(param, this.questionList);
+						// return;
+						if (this.isLast) {
+							if (this.isJumpChuze) {
+								location.href = './submit.html';
+							} else {
+								this._applySubmitData(param);
+							}
+						} else {
+							// 获取当前人员索引值，进行+1存入缓存中
+							var current = this.currentPerson;
+							getLocalData.setCurrentPerson(++current);
+							
+							setTimeout(function(){
+								location.href = './index.html';
+							},500)
+						}
+					}
+				},
+				// 数据拼接以及验证是否可以通过核保
+				dataSplicing: function (arr) {
+					var getPerson = getLocalData.getPerson();
+					var result = [];
+					var that = this;
+					var conclusion = ''; // 核保通过状态
+					var conclusionDesc = ''; // 除责描述
+					var itemIsJubao = false; // 临时是否是除责变量
+					var itemIsChuze = false; // 临时是否是除责变量
+					var itemIsHebao = false; // 临时是否是拒保变量
+					var stateGroup = null;
+					var note = '';
+					var itemNote = '';
+					var isPass = false;
+					var questionIndexVal = [];
+					this.isJumpChuze = false; // 初始化 是否跳转提示页面变量
+					arr.map(function (i, k) {
+						questionIndexVal = [];
+
+						result.push({
+							disTypeBig: i.parentName,
+							disTypeSmall: i.dName,
+							answers: []
+						})
+
+						itemIsJubao = !i.ispass;
+						isPass = i.ispass; // 判断是否拒保
+						i.currentAnswer.map(function (ii, kk) {
+							var item = i.qa[ii]
+							questionIndexVal.push(`${ii}/${item.activeAnswer}`)
+							result[k].answers.push({
+								"questionTitle": item.question,
+								"optionTitles": item.answerArr,
+								"answer": item.answersArr[item.activeAnswer],
+								"questionType": "1"
+							})
+							item = null;
+						})
+						questionIndexVal.map(function (ii) {
+							if (!itemIsChuze && !itemIsHebao) {
+								// 判断当前问题的除责和核保以及通过的话赋值除责话术
+								itemIsChuze = i.chuze.indexOf(ii) > -1
+								itemIsHebao = i.hebao.indexOf(ii) > -1
+								if (typeof i.note == 'string') {
+									note = i.note;
+								} else {
+									note = i.note[i.currentAnswer[0]];
+								}
+								itemNote = itemIsChuze ? note : '';
+								// 判断核保通过的条件 1.核保数组为空 2.数组存在，并且与当前选中的值相符合
+								stateGroup = !(i.hebao.length > 0 && itemIsChuze || i.hebao
+									.length.length === 0); // 判断是否核保通过
+								if (!stateGroup) {
+									isPass = false;
+								}
+
+							}
+						})
+
+
+						conclusion +=
+							`${itemIsJubao ? '拒保' : ''}${itemIsChuze ? '除责' : ''}${itemIsHebao ? '核保通过' : ''},`;
+						conclusionDesc += itemNote + ',';
+
+						itemIsChuze = false;
+						itemIsHebao = false;
+						itemNote = '';
+					})
+					conclusion = conclusion.slice(0, conclusion.length - 1);
+					conclusionDesc = conclusionDesc.slice(0, conclusionDesc.length - 1);
+					getPerson[this.currentPerson].conclusion = conclusion;
+					getPerson[this.currentPerson].conclusionDesc = conclusionDesc;
+					getPerson[this.currentPerson].diseaseList = result;
+
+					getPerson.map(function (i) {
+						// 判断是否有除责话术
+						if (i.conclusionDesc) {
+							that.isJumpChuze = true;
+						}
+					})
+					getLocalData.setPerson(getPerson); // 缓存当前数据
+					return getPerson;
+				},
+				_applySubmitData: function (data) {
+					var param = {
+						policyInsuredSurveyList: data
+					}
+					var that = this;
+					this.loading = true
+					setTimeout(function () {
+						console.log('提交参数', param)
+						that.loading = false
+					}, 1500)
+					// ajax.saveTXInsuredSurvey(param).then(function(res) {
+					// 	if (res.data.code === '0') {
+					// 		location.href = res.data.data.url
+					// 	}
+					// 	that.loading = false
+					// }).catch(function() {
+					// 	that.loading = false
+					// })
+				}
+			}
+		})
+	</script>
+</body>
+
+</html>

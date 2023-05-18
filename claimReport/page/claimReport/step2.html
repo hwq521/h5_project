@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>车辆报案</title>
+    <meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name="viewport" id="viewport" />
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="keywords" content="">
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <link rel="stylesheet" href="../../css/new-common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/customer-form.css" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/common.js?v=1.01"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+    <style>
+        .form-group .form-item:nth-child(2):before {
+            left: 0 !important;
+            right: 0 !important;
+        }
+        
+        .btn-input>.btn {
+            margin-right: 10px;
+        }
+        
+        .btn-input>.value {
+            width: 100%;
+        }
+        
+        .close-map {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 48px;
+            height: 48px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <step :steptype="1" :step="2"></step>
+
+        <ul class="form-group">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_1.png" class="form-title-icon">
+                <div class="form-title">保单号</div>
+            </li>
+        </ul>
+
+        <ul class="form-group">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_2.png" class="form-title-icon">
+                <div class="form-title">报案人信息</div>
+            </li>
+            <li class="form-item">
+                <div class="label">姓名</div>
+                <div class="form-item_rig btn-input">
+                    <button class="btn btn-s btn-primary">选择</button>
+                    <input type="text" class="input-bg value" placeholder="请输入报案人姓名">
+                </div>
+            </li>
+            <li class="form-item form-item_link">
+                <div class="label">证件类型</div>
+                <input type="text" class="value" placeholder="请选择">
+            </li>
+            <li class="form-item">
+                <div class="label">证件号</div>
+                <input type="text" class="value input-bg" placeholder="请输入报案人证件号">
+            </li>
+            <li class="form-item">
+                <div class="label">手机号</div>
+                <input type="text" class="value input-bg" placeholder="请输入报案人手机号">
+            </li>
+            <li class="form-item">
+                <div class="label">邮箱</div>
+                <input type="text" class="value input-bg" placeholder="请输入报案人邮箱">
+            </li>
+        </ul>
+
+        <ul class="form-group">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_4.png" class="form-title-icon">
+                <div class="form-title">出险信息</div>
+            </li>
+            <li class="form-item form-item_link">
+                <div class="label">出险日期</div>
+                <input type="text" class="value" placeholder="请选择出险日期">
+            </li>
+            <li class="form-item">
+                <div class="label">出险人姓名</div>
+                <input type="text" class="value" placeholder="请输入出险人姓名">
+            </li>
+            <li class="form-item">
+                <div class="label">出险人证件类型</div>
+                <input type="text" class="value input-bg" placeholder="请选择出险人证件类型">
+            </li>
+            <li class="form-item">
+                <div class="label">出险人证件号</div>
+                <input type="text" class="value input-bg" placeholder="请输入出险人证件号">
+            </li>
+            <li class="form-item form-item_link">
+                <div class="label">出险地址</div>
+                <input type="text" v-model="formData.address" class="value" placeholder="请选择出险地址" @click="formData.showMap = true" readonly>
+            </li>
+            <li class="form-item">
+                <div class="label">出险详细地址</div>
+                <textarea cols="30" rows="4" class="value input-bg" placeholder="请输入出险详细地址"></textarea>
+            </li>
+        </ul>
+        <ul class="form-group form-textarea">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_4.png" class="form-title-icon">
+                <div class="form-title">出险原因描述</div>
+            </li>
+            <li class="form-item">
+                <div class="form-item_rig input-textarea">
+                    <textarea v-model="textarea" :maxlength="textareaMax" cols="30" class="value input-bg" rows="4" placeholder="请输入出险详细地址"></textarea>
+                    <div class="countnum">{{textarea.length}}/{{textareaMax}}</div>
+                </div>
+            </li>
+        </ul>
+
+        <div class="btn-form-area">
+            <button class="btn btn-l btn-primary">下一步</button>
+        </div>
+
+
+        <!-- 选择地点 -->
+        <amap-iframe-popup v-model="formData.showMap" @message="listenerMapMessage"></amap-iframe-popup>
+    </div>
+    <script src="../../js/vueComponents/step.component.js"></script>
+    <script src="../../js/vueComponents/vantPicker.js"></script>
+    <script src="../../js/vueComponents/amap-iframe-popup.component.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    formData: {
+                        showMap: false,
+                        address: '',
+                        name: ''
+                    },
+                    textarea: '',
+                    textareaMax: 200,
+                    result: [],
+                    result1: [],
+                    showPicker: false,
+                    column: {},
+                    columns: [{
+                        text: '公司1',
+                        value: '1'
+                    }, {
+                        text: '公司2',
+                        value: '2'
+                    }, {
+                        text: '公司3',
+                        value: '3'
+                    }, ]
+                }
+            },
+            methods: {
+                listenerMapMessage: function(e) {
+                    this.formData.address = e.data.address + ' ' + e.data.name
+                    this.formData.showMap = false
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

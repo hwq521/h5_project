@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>智能核保-核保成功</title>
+	<meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name="viewport"
+		id="viewport" />
+	<meta name="format-detection" content="telephone=yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta http-equiv="keywords" content="">
+	<link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+	<link rel="stylesheet" href="../../css/intelligence/index.css">
+	<script src="../../js/zepto.min.js"></script>
+	<script src="../../js/base.js?v=20200915"></script>
+	<script src="../../js/common.js?v=1.01"></script>
+	<script src="../../js/showText.js"></script>
+	<script src="../../js/init_750.js"></script>
+	<script src="../../js/common_utils.js"></script>
+	<link rel="stylesheet" href="../../css/vant.css" />
+
+	<!-- 引入 Vue 和 Vant 的 JS 文件 -->
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+	<script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+	<script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+	<script src="../../js/axios/package-axios.js"></script>
+	<style>
+		.state-content,
+		.des-content {
+			margin: 0.2rem 0.288rem;
+			background-color: #fff;
+			border-radius: 0.1rem;
+		}
+
+		.state-content {
+			padding: 0.4rem 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+		}
+
+		.state-content .van-icon {
+			font-size: 0.8rem;
+			background-color: #1989fa;
+			border-radius: 50%;
+			color: #fff;
+			padding: 0.2rem;
+			margin-bottom: 0.2rem;
+		}
+
+		.des-content {
+			padding: 0 0.2rem;
+		}
+
+		.des-content .title {
+			padding: 0.2rem 0;
+		}
+
+		.des-content .des-item {
+			padding-bottom: 0.2rem;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		<div class="state-content">
+			<van-icon name="success"></van-icon>
+			<div class="state-text">可以投保</div>
+		</div>
+		<div class="des-content">
+			<div class="title">特别约定</div>
+			<template v-for="(item,key) in desData">
+				<div class="des-item">{{item}}</div>
+			</template>
+		</div>
+		<div class="btn-area">
+			<van-button type="info" @click="_applySubmitData" :disabled="loading">立即投保</van-button>
+		</div>
+		
+		<!-- 加载中 -->
+		<van-overlay :show="loading">
+			<van-loading size="0.6rem" color="#fff" vertical>加载中...</van-loading>
+		</van-overlay>
+	</div>
+
+	<script src="./diseaseData.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+		new Vue({
+			el: '#app',
+			data() {
+				return {
+					loading: false,
+					submitData: [],
+					desData: []
+				}
+			},
+			created() {
+				this.init()
+			},
+			methods: {
+				init: function () {
+					var submitData = getLocalData.getPerson()
+					var desData = [];
+					submitData.map(function (i) {
+						var conclusionDesc = i.conclusionDesc
+						if (conclusionDesc) {
+							conclusionDesc = conclusionDesc.split(',')
+							conclusionDesc.map(function (ii) {
+								if (ii) {
+									ii = ii.slice(3, ii.length);
+									desData.push(`被保险人[${i.insuredName}]在保险合同有效期间内，对${ii}引起的治疗，我公司不承担保险金给付责任。`)
+								}
+							})
+						}
+					})
+					this.desData = desData;
+					this.submitData = submitData;
+				},
+				_applySubmitData: function () {
+					var param = {
+						policyInsuredSurveyList: this.submitData
+					}
+					var that = this;
+					this.loading = true
+					setTimeout(function () {
+						console.log('提交参数', param)
+						that.loading = false
+					}, 1500)
+					// ajax.saveTXInsuredSurvey(param).then(function (res) {
+					// 	if (res.data.code === '0') {
+					// 		location.href = res.data.data.url
+					// 	}
+					// 	that.loading = false
+					// }).catch(function () {
+					// 	that.loading = false
+					// })
+				}
+			}
+		})
+	</script>
+</body>
+
+</html>

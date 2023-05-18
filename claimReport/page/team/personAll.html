@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的团队</title>
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/common.js?v=1.01"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+    <link rel="stylesheet" href="../../css/team/style.css" />
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+    <style>
+        body {
+            background: url(../../img/team/team_index_bg.png) no-repeat center top #F3F4F8;
+            background-size: 100% 150px;
+        }
+
+
+        .title-card {
+            width: 130px;
+            padding: 14px 0;
+            background-color: #fff;
+            border-radius: 6px;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+            margin-top: 20px;
+        }
+
+        .title-card img {
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        .title-card span {
+            font-size: 14px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="title-card">
+            <img src="../../img/team/title-icon.png">
+            <span>直辖增员</span>
+        </div>
+        <div class="content-box space-margin">
+            <ul class="person-group">
+                <template v-for="(item,key) in agentAccountList">
+                    <li>
+                        <a href="./personalBusiness.html">
+                            <img :src="item.filePort">
+                            <h5>{{item.cnName}}</h5>
+                        </a>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    agentAccountList: [], // 直辖增员
+                }
+            },
+            created() {
+                this.getAllTeamEmployeeInfo()
+            },
+            methods: {
+                // 直辖增员
+                getAllTeamEmployeeInfo: function () {
+                    var that = this;
+                    var res = {
+                        "code": "0", "data": {
+                            "agentAccountList": [{ "agencyNo": "1001", "auditState": "1", "auditStateStr": "审核通过", "birthday": "", "businessEmployeeNumber": "", "certificateTypeStr": "", "cnName": "李四", "createOper": "", "createTime": "2018-11-26 13:53:41", "delFlag": "0", "filePort": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "genderStr": "", "insCompanyNumber": "", "inviteCode": "DXJ32N", "isAuthentication": "0", "isAuthenticationStr": "未认证", "isDefault": "0", "isDefaultStr": "否", "lastLoginTime": "2019-05-21 11:08:54", "lastSecondLoginTime": "", "leaveCount": 0, "leaveTime": "", "loginErrorCount": 0, "loginName": "", "mapCondition": {}, "mobile": "18711260002", "password": "bda31e399959162702892088fa47c3b9", "registerSource": "", "remindDate": "", "roleType": "02", "sheetRow": 0, "showEmployeeNumber": "", "showRealName": "李四", "sortFieldName": "createTime", "sortType": "desc", "state": "0", "stateStr": "在职", "storeNo": "1001", "totalIntegral": 0, "updateOpeTime": "2019-05-21 11:08:54", "updateOper": "0000000065123b530165126d0b4d0086", "userType": "01", "uuid": "00000000674d7d4a01674e949ab30048", "weixinThirdUuid": "" }, { "agencyNo": "1001", "auditState": "1", "auditStateStr": "审核通过", "birthday": "", "businessEmployeeNumber": "", "certificateTypeStr": "", "cnName": "张三", "createOper": "", "createTime": "2018-11-26 13:52:02", "delFlag": "0", "filePort": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "genderStr": "", "insCompanyNumber": "", "inviteCode": "5Q70X3", "isAuthentication": "0", "isAuthenticationStr": "未认证", "isDefault": "0", "isDefaultStr": "否", "lastLoginTime": "2019-05-21 11:08:53", "lastSecondLoginTime": "", "leaveCount": 0, "leaveTime": "", "loginErrorCount": 0, "loginName": "", "mapCondition": {}, "mobile": "18711260001", "password": "06ed9de7e0d1e59aa642d32cb0188a98", "registerSource": "", "remindDate": "", "roleType": "02", "sheetRow": 0, "showEmployeeNumber": "", "showRealName": "张三", "sortFieldName": "createTime", "sortType": "desc", "state": "0", "stateStr": "在职", "storeNo": "1001", "totalIntegral": 0, "updateOpeTime": "2019-05-21 11:08:53", "updateOper": "0000000065123b530165126d0b4d0086", "userType": "01", "uuid": "00000000674d7d4a01674e931a220042", "weixinThirdUuid": "" }, { "agencyNo": "1001", "auditState": "1", "auditStateStr": "审核通过", "birthday": "", "businessEmployeeNumber": "", "certificateTypeStr": "", "cnName": "李四", "createOper": "", "createTime": "2018-11-26 13:53:41", "delFlag": "0", "filePort": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "genderStr": "", "insCompanyNumber": "", "inviteCode": "DXJ32N", "isAuthentication": "0", "isAuthenticationStr": "未认证", "isDefault": "0", "isDefaultStr": "否", "lastLoginTime": "2019-05-21 11:08:54", "lastSecondLoginTime": "", "leaveCount": 0, "leaveTime": "", "loginErrorCount": 0, "loginName": "", "mapCondition": {}, "mobile": "18711260002", "password": "bda31e399959162702892088fa47c3b9", "registerSource": "", "remindDate": "", "roleType": "02", "sheetRow": 0, "showEmployeeNumber": "", "showRealName": "李四", "sortFieldName": "createTime", "sortType": "desc", "state": "0", "stateStr": "在职", "storeNo": "1001", "totalIntegral": 0, "updateOpeTime": "2019-05-21 11:08:54", "updateOper": "0000000065123b530165126d0b4d0086", "userType": "01", "uuid": "00000000674d7d4a01674e949ab30048", "weixinThirdUuid": "" }, { "agencyNo": "1001", "auditState": "1", "auditStateStr": "审核通过", "birthday": "", "businessEmployeeNumber": "", "certificateTypeStr": "", "cnName": "张三", "createOper": "", "createTime": "2018-11-26 13:52:02", "delFlag": "0", "filePort": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "genderStr": "", "insCompanyNumber": "", "inviteCode": "5Q70X3", "isAuthentication": "0", "isAuthenticationStr": "未认证", "isDefault": "0", "isDefaultStr": "否", "lastLoginTime": "2019-05-21 11:08:53", "lastSecondLoginTime": "", "leaveCount": 0, "leaveTime": "", "loginErrorCount": 0, "loginName": "", "mapCondition": {}, "mobile": "18711260001", "password": "06ed9de7e0d1e59aa642d32cb0188a98", "registerSource": "", "remindDate": "", "roleType": "02", "sheetRow": 0, "showEmployeeNumber": "", "showRealName": "张三", "sortFieldName": "createTime", "sortType": "desc", "state": "0", "stateStr": "在职", "storeNo": "1001", "totalIntegral": 0, "updateOpeTime": "2019-05-21 11:08:53", "updateOper": "0000000065123b530165126d0b4d0086", "userType": "01", "uuid": "00000000674d7d4a01674e931a220042", "weixinThirdUuid": "" }, { "agencyNo": "1001", "auditState": "1", "auditStateStr": "审核通过", "birthday": "", "businessEmployeeNumber": "", "certificateTypeStr": "", "cnName": "李四", "createOper": "", "createTime": "2018-11-26 13:53:41", "delFlag": "0", "filePort": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "genderStr": "", "insCompanyNumber": "", "inviteCode": "DXJ32N", "isAuthentication": "0", "isAuthenticationStr": "未认证", "isDefault": "0", "isDefaultStr": "否", "lastLoginTime": "2019-05-21 11:08:54", "lastSecondLoginTime": "", "leaveCount": 0, "leaveTime": "", "loginErrorCount": 0, "loginName": "", "mapCondition": {}, "mobile": "18711260002", "password": "bda31e399959162702892088fa47c3b9", "registerSource": "", "remindDate": "", "roleType": "02", "sheetRow": 0, "showEmployeeNumber": "", "showRealName": "李四", "sortFieldName": "createTime", "sortType": "desc", "state": "0", "stateStr": "在职", "storeNo": "1001", "totalIntegral": 0, "updateOpeTime": "2019-05-21 11:08:54", "updateOper": "0000000065123b530165126d0b4d0086", "userType": "01", "uuid": "00000000674d7d4a01674e949ab30048", "weixinThirdUuid": "" }, { "agencyNo": "1001", "auditState": "1", "auditStateStr": "审核通过", "birthday": "", "businessEmployeeNumber": "", "certificateTypeStr": "", "cnName": "张三", "createOper": "", "createTime": "2018-11-26 13:52:02", "delFlag": "0", "filePort": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "genderStr": "", "insCompanyNumber": "", "inviteCode": "5Q70X3", "isAuthentication": "0", "isAuthenticationStr": "未认证", "isDefault": "0", "isDefaultStr": "否", "lastLoginTime": "2019-05-21 11:08:53", "lastSecondLoginTime": "", "leaveCount": 0, "leaveTime": "", "loginErrorCount": 0, "loginName": "", "mapCondition": {}, "mobile": "18711260001", "password": "06ed9de7e0d1e59aa642d32cb0188a98", "registerSource": "", "remindDate": "", "roleType": "02", "sheetRow": 0, "showEmployeeNumber": "", "showRealName": "张三", "sortFieldName": "createTime", "sortType": "desc", "state": "0", "stateStr": "在职", "storeNo": "1001", "totalIntegral": 0, "updateOpeTime": "2019-05-21 11:08:53", "updateOper": "0000000065123b530165126d0b4d0086", "userType": "01", "uuid": "00000000674d7d4a01674e931a220042", "weixinThirdUuid": "" }, { "agencyNo": "1001", "auditState": "1", "auditStateStr": "审核通过", "birthday": "", "businessEmployeeNumber": "", "certificateTypeStr": "", "cnName": "李四", "createOper": "", "createTime": "2018-11-26 13:53:41", "delFlag": "0", "filePort": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "genderStr": "", "insCompanyNumber": "", "inviteCode": "DXJ32N", "isAuthentication": "0", "isAuthenticationStr": "未认证", "isDefault": "0", "isDefaultStr": "否", "lastLoginTime": "2019-05-21 11:08:54", "lastSecondLoginTime": "", "leaveCount": 0, "leaveTime": "", "loginErrorCount": 0, "loginName": "", "mapCondition": {}, "mobile": "18711260002", "password": "bda31e399959162702892088fa47c3b9", "registerSource": "", "remindDate": "", "roleType": "02", "sheetRow": 0, "showEmployeeNumber": "", "showRealName": "李四", "sortFieldName": "createTime", "sortType": "desc", "state": "0", "stateStr": "在职", "storeNo": "1001", "totalIntegral": 0, "updateOpeTime": "2019-05-21 11:08:54", "updateOper": "0000000065123b530165126d0b4d0086", "userType": "01", "uuid": "00000000674d7d4a01674e949ab30048", "weixinThirdUuid": "" }, { "agencyNo": "1001", "auditState": "1", "auditStateStr": "审核通过", "birthday": "", "businessEmployeeNumber": "", "certificateTypeStr": "", "cnName": "张三", "createOper": "", "createTime": "2018-11-26 13:52:02", "delFlag": "0", "filePort": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "genderStr": "", "insCompanyNumber": "", "inviteCode": "5Q70X3", "isAuthentication": "0", "isAuthenticationStr": "未认证", "isDefault": "0", "isDefaultStr": "否", "lastLoginTime": "2019-05-21 11:08:53", "lastSecondLoginTime": "", "leaveCount": 0, "leaveTime": "", "loginErrorCount": 0, "loginName": "", "mapCondition": {}, "mobile": "18711260001", "password": "06ed9de7e0d1e59aa642d32cb0188a98", "registerSource": "", "remindDate": "", "roleType": "02", "sheetRow": 0, "showEmployeeNumber": "", "showRealName": "张三", "sortFieldName": "createTime", "sortType": "desc", "state": "0", "stateStr": "在职", "storeNo": "1001", "totalIntegral": 0, "updateOpeTime": "2019-05-21 11:08:53", "updateOper": "0000000065123b530165126d0b4d0086", "userType": "01", "uuid": "00000000674d7d4a01674e931a220042", "weixinThirdUuid": "" },
+                            { "agencyNo": "1001", "auditState": "1", "auditStateStr": "审核通过", "birthday": "", "businessEmployeeNumber": "", "certificateTypeStr": "", "cnName": "李四", "createOper": "", "createTime": "2018-11-26 13:53:41", "delFlag": "0", "filePort": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "genderStr": "", "insCompanyNumber": "", "inviteCode": "DXJ32N", "isAuthentication": "0", "isAuthenticationStr": "未认证", "isDefault": "0", "isDefaultStr": "否", "lastLoginTime": "2019-05-21 11:08:54", "lastSecondLoginTime": "", "leaveCount": 0, "leaveTime": "", "loginErrorCount": 0, "loginName": "", "mapCondition": {}, "mobile": "18711260002", "password": "bda31e399959162702892088fa47c3b9", "registerSource": "", "remindDate": "", "roleType": "02", "sheetRow": 0, "showEmployeeNumber": "", "showRealName": "李四", "sortFieldName": "createTime", "sortType": "desc", "state": "0", "stateStr": "在职", "storeNo": "1001", "totalIntegral": 0, "updateOpeTime": "2019-05-21 11:08:54", "updateOper": "0000000065123b530165126d0b4d0086", "userType": "01", "uuid": "00000000674d7d4a01674e949ab30048", "weixinThirdUuid": "" }, { "agencyNo": "1001", "auditState": "1", "auditStateStr": "审核通过", "birthday": "", "businessEmployeeNumber": "", "certificateTypeStr": "", "cnName": "张三", "createOper": "", "createTime": "2018-11-26 13:52:02", "delFlag": "0", "filePort": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "genderStr": "", "insCompanyNumber": "", "inviteCode": "5Q70X3", "isAuthentication": "0", "isAuthenticationStr": "未认证", "isDefault": "0", "isDefaultStr": "否", "lastLoginTime": "2019-05-21 11:08:53", "lastSecondLoginTime": "", "leaveCount": 0, "leaveTime": "", "loginErrorCount": 0, "loginName": "", "mapCondition": {}, "mobile": "18711260001", "password": "06ed9de7e0d1e59aa642d32cb0188a98", "registerSource": "", "remindDate": "", "roleType": "02", "sheetRow": 0, "showEmployeeNumber": "", "showRealName": "张三", "sortFieldName": "createTime", "sortType": "desc", "state": "0", "stateStr": "在职", "storeNo": "1001", "totalIntegral": 0, "updateOpeTime": "2019-05-21 11:08:53", "updateOper": "0000000065123b530165126d0b4d0086", "userType": "01", "uuid": "00000000674d7d4a01674e931a220042", "weixinThirdUuid": "" }]
+                        }, "message": "成功", "msg": "成功"
+                    }
+                    console.log(res)
+                    if (res.code === '0') {
+                        that.agentAccountList = res.data.agentAccountList
+                    }
+                    return;
+                    // ajax.getAllTeamEmployeeInfo({ introducerUuid: '0000000065e862890165ed252cb9003c' }).then(function (res) {
+                    //     if (res.data.code === '0') {
+                    //         that.agentAccountList = res.data.data.agentAccountList.slice(0, 4)
+                    //     }
+                    // })
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

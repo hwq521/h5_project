@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>智能核保-选择疾病</title>
+	<meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name="viewport"
+		id="viewport" />
+	<meta name="format-detection" content="telephone=yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta http-equiv="keywords" content="">
+	<link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+	<link rel="stylesheet" href="../../css/intelligence/index.css">
+	<script src="../../js/zepto.min.js"></script>
+	<script src="../../js/base.js?v=20200915"></script>
+	<script src="../../js/common.js?v=1.01"></script>
+	<script src="../../js/common_utils.js?v=1.01"></script>
+	<script src="../../js/showText.js"></script>
+	<script src="../../js/init_750.js"></script>
+	<link rel="stylesheet" href="../../css/vant.css" />
+
+	<!-- 引入 Vue 和 Vant 的 JS 文件 -->
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+	<script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+	<script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+	<script src="../../js/axios/package-axios.js"></script>
+	<style>
+		.van-collapse {
+			padding-bottom: 1.2rem;
+		}
+
+		.btn-area {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			background-color: #f1f1f1;
+			padding: 0 !important;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div id="app">
+		<van-cell-group>
+			<van-cell :title="person[currentPerson].insuredName" :value="`${currentPerson+1}/${person.length}`" center>
+				<template #icon>
+					<img src="https://uat-ecsalefront.axa.cn/m/weChatsm/img/man.png" class="head-img">
+				</template>
+			</van-cell>
+		</van-cell-group>
+		<div class="selected-area">
+			<div class="selected-area-title">
+				请选择曾患或在患疾病名称(可多选)
+			</div>
+			<ul class="selected-item" ref="selectedItem">
+				<template v-for="(item,key) in currentData">
+					<li @click="checkboxToggle('checkbox'+item.k,item.kk)">
+						{{diseaseData[item.k].children[item.kk].dName}}
+					</li>
+				</template>
+			</ul>
+		</div>
+		<van-collapse v-model="activeName" accordion>
+			<template :value>
+				<template v-for="(item,key) in diseaseData">
+					<van-collapse-item :title="item.dName" :name="key">
+						<van-checkbox-group v-model="diseaseData[key].current">
+							<van-cell-group>
+								<van-cell v-for="(iitem, kkey) in item.children" clickable :key="item"
+									:title="iitem.dName" @click="checkboxToggle('checkbox'+key,`${kkey}`)">
+									<template #right-icon>
+										<van-checkbox :name="kkey" :ref="`checkbox${key}`" />
+									</template>
+								</van-cell>
+							</van-cell-group>
+						</van-checkbox-group>
+				</template>
+			</template>
+			</van-collapse-item>
+			</template>
+		</van-collapse>
+		<div class="btn-area">
+			<van-button type="info" @click="jumpSwitchAnswer">下一步</van-button>
+		</div>
+
+		<!-- 加载中 -->
+		<van-overlay :show="loading">
+			<van-loading size="0.6rem" color="#fff" vertical>加载中...</van-loading>
+		</van-overlay>
+	</div>
+	<script src="./diseaseData.js"></script>
+	<script type="text/javascript">
+		new Vue({
+			el: '#app',
+			data() {
+				return {
+					loading: false,
+					currentPerson: 0,
+					activeName: '',
+					diseaseData: [],
+					currentData: [],
+					person: [{
+						insuredName: ''
+					}],
+				}
+			},
+			created() {
+				this.initUrlParam();
+				this.initData()
+			},
+			methods: {
+				initData: function () {
+					var arrData = JSON.parse(JSON.stringify(diseaseData));
+					var newResult = [];
+					arrData.map(function (i) {
+						i['current'] = []
+						newResult.push(i)
+					})
+					this.diseaseData = newResult
+				},
+				alertMsg: function (msg) {
+					// 没url参数和没有缓存信息
+					vant.Dialog.alert({
+						title: '提示',
+						message: msg,
+					}).then(() => {
+						history.back() // 参数错误返回上一页
+						// on close
+					});
+				},
+				// 初始化url参数
+				initUrlParam: async function () {
+					var orderMainUuid = getQueryString('orderMainUuid'),
+						chooseInsids = getQueryString('chooseInsids'),
+						getCurrentPerson = getLocalData.getCurrentPerson(),
+						getPerson = getLocalData.getPerson(),
+						isHasPersonInfo = JSON.stringify(getCurrentPerson) && getPerson.length > 0,
+						isHasUrlParam = underfinedToEmpty(orderMainUuid) && underfinedToEmpty(chooseInsids),
+						localData = [],
+						currentIndex = 0;
+					this.orderMainUuid = orderMainUuid;
+					// 判断是否存在url参数或缓存信息存在
+					console.log(!isHasUrlParam, JSON.stringify(getCurrentPerson), getPerson > 0,
+						getCurrentPerson)
+					if (!isHasUrlParam) {
+						if (isHasPersonInfo) {
+							this.person = getPerson;
+							this.currentPerson = getCurrentPerson;
+							console.log(getPerson, getCurrentPerson)
+						} else {
+							this.alertMsg('参数错误，需要传入orderMainUuid和chooseInsids参数')
+						}
+					} else {
+						this.loading = true
+						getLocalData.clearAll();
+						var insidsData = await this.getTXInsuredInfo();
+						if (insidsData.length > 0) {
+							insidsData.map(function (i, k) {
+								console.log(i.insuredSeqNo)
+								localData.push({
+									storeNo: getSessionStoreNo(),
+									orderMainUuid: orderMainUuid,
+									lifeno: i.insuredSeqNo,
+									insuredName: i.name,
+									insuredCertificatesNumber: i.certificatesNumber,
+									uuid: i.uuid,
+									conclusion: "",
+									conclusionDesc: "",
+									diseaseList: []
+								})
+							})
+							getLocalData.setPerson(localData);
+							getLocalData.setCurrentPerson(currentIndex);
+							// console.log(localData, currentIndex);
+							this.person = localData;
+							this.currentPerson = currentIndex;
+						}
+						this.loading = false
+					}
+				},
+				// 多选框点击事件
+				checkboxToggle(str, index) {
+					this.$refs[str][Number(index)].toggle();
+					var result = [],
+						item = '',
+						that = this;
+					setTimeout(function () {
+						that.diseaseData.map(function (i, k) {
+							i.current.map(function (ii) {
+								result.push({
+									k: k,
+									kk: ii
+								})
+							})
+						})
+						var selectedItem = that.$refs['selectedItem']
+						window.www = that.$refs['selectedItem']
+						selectedItem.scrollTo(0, selectedItem.scrollHeight)
+						that.currentData = result
+					}, 50)
+				},
+				jumpSwitchAnswer: function () {
+					if (this.currentData.length === 0) {
+						vant.Toast('请选择患疾病名称')
+					} else {
+						getLocalData.setData(this.currentData)
+						location.href = './answers.html'
+					}
+				},
+				getTXInsuredInfo: function () {
+					var that = this;
+					return new Promise(function (resolve, reject) {
+
+						resolve([
+							{
+								insuredSeqNo: '2',
+								name: '发发',
+								certificatesNumber: '123456789',
+								uuid: '12312313123',
+							},
+
+							{
+								insuredSeqNo: '1',
+								name: '大明',
+								certificatesNumber: '123456789',
+								uuid: '12312313124',
+							}])
+						// ajax.getTXInsuredInfo({
+						// 	chooseInsids: getQueryString('chooseInsids')
+						// }).then(function (res) {
+						// 	if (res.data.code === '0') {
+						// 		var result = res.data.data.policyInsuredList;
+						// 		result = numSort(result, 'insuredSeqNo');
+						// 		resolve(res.data.data.policyInsuredList)
+						// 	} else {
+						// 		resolve([])
+						// 		that.alertMsg('获取数据失败')
+						// 	}
+						// }).catch(function () {
+						// 	resolve([])
+						// 	that.alertMsg('获取数据错误')
+						// })
+					})
+				}
+			}
+		})
+	</script>
+</body>
+
+</html>

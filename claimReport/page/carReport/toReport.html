@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>车险报案</title>
+    <meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name="viewport"
+        id="viewport" />
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="keywords" content="">
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <link rel="stylesheet" href="../../css/new-common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/customer-form.css" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+    <style type="text/css">
+        .form-group .form-item .value:not(textarea) {
+            text-align: right;
+        }
+
+        .close-map {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 0.96rem;
+            height: 0.96rem;
+        }
+
+        .form-item_rig .send-sms {
+            flex: 0 0 1.72rem;
+            margin-left: 0.2rem;
+        }
+
+        .form-item_rig .value {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <ul class="form-group">
+            <li class="form-item form-item_link form-item_required">
+                <div class="label">出险日期</div>
+                <form-date-picker v-model="formData.chuxianDate" placeholder="请选择时间"></form-date-picker>
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">车牌号</div>
+                <input type="text" v-model="formData.carNo" class="value" placeholder="" />
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">统筹单号</div>
+                <input type="text" :value="formData.policyNo" class="value" readonly />
+            </li>
+            <li class="form-item form-item_link form-item_required">
+                <div class="label">有无人员伤亡</div>
+                <form-picker v-model="formData.isCasualties" :columns="formData.isCasualtiesType"
+                    placeholder="请选择有无人员伤亡">
+                </form-picker>
+            </li>
+            <li class="form-item form-item_link form-item_required">
+                <div class="label">事发地点</div>
+                <input type="text" v-model="formData.address" class="value" placeholder="请选择事发地点" ref="chooseSite"
+                    readonly @click="formData.showMap = true" />
+            </li>
+            <li class="form-item form-item_link form-item_required">
+                <div class="label">道路类型</div>
+                <form-picker v-model="formData.roadTypeValue" :columns="formData.roadType" placeholder="请选择道路类型">
+                </form-picker>
+            </li>
+            <li class="form-item">
+                <div class="label">地点补充</div>
+                <textarea v-model="formData.siteAdd" rows="3" cols="3" class="value input-bg"
+                    placeholder="请输入地点补充"></textarea>
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">驾驶员</div>
+                <input type="text" v-model="formData.driver" class="value input-bg" placeholder="请输入驾驶员姓名" />
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">报案人</div>
+                <input type="text" v-model="formData.reporter" class="value input-bg" placeholder="请输入报案人姓名" />
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">联系电话</div>
+                <input type="text" v-model="formData.tel" class="value input-bg" placeholder="请输入联系电话" />
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">验证码</div>
+                <div class="form-item_rig">
+                    <input type="text" v-model="formData.smsCode" class="value input-bg" placeholder="请输入验证码" />
+                    <button class="btn btn-primary btn-s send-sms" :disabled="btnsms.disabled"
+                        @click="sendsms">{{btnsms.buttonText}}</button>
+                </div>
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">报案原因描述</div>
+                <textarea v-model="formData.note" rows="3" cols="3" class="value input-bg"
+                    placeholder="写出险时间的经过以及结果现状 （不超过200字）"></textarea>
+            </li>
+        </ul>
+        <div class="btn-form-area">
+            <button class="btn btn-l btn-primary" @click="_applySubmit">提交</button>
+        </div>
+        <!-- 选择地点 -->
+        <amap-iframe-popup v-model="formData.showMap" @message="listenerMapMessage"></amap-iframe-popup>
+
+    </div>
+    <script src="../../js/vueComponents/vantPicker.js"></script>
+    <script src="../../js/vueComponents/vantPicker.component.js"></script>
+    <script src="../../js/vueComponents/vantDatePicker.js"></script>
+    <script src="../../js/vueComponents/vantDatePicker.component.js"></script>
+    <script src="../../js/vueComponents/amap-iframe-popup.component.js"></script>
+    <script src="../../js/common_utils.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    btnsms: {
+                        disabled: false,
+                        buttonText: '获取验证码'
+                    },
+                    formData: {
+                        chuxianDateShow: false,
+                        chuxianDate: new Date(),
+                        isCasualties: {},
+                        isCasualtiesType: [{
+                            text: '有',
+                            value: '1'
+                        }, {
+                            text: '无',
+                            value: '0'
+                        }],
+                        chuxiantypeShow: false,
+                        chuxiantype: [{
+                            text: '类型1',
+                            value: '1'
+                        }, {
+                            text: '类型2',
+                            value: '2'
+                        },],
+                        chuxiantypeValue: {
+                            text: '类型1',
+                            value: '1'
+                        },
+                        roadTypeShow: false,
+                        roadType: [{
+                            text: '高速公路',
+                            value: '01'
+                        }, {
+                            text: '普通公路',
+                            value: '02'
+                        }, {
+                            text: '市区道路',
+                            value: '03'
+                        }, {
+                            text: '庭院车场',
+                            value: '04'
+                        }, {
+                            text: '矿山地带',
+                            value: '05'
+                        }, {
+                            text: '考试场地带',
+                            value: '06'
+                        }, {
+                            text: '乡村公路',
+                            value: '07'
+                        }, {
+                            text: '其它',
+                            value: '99'
+                        },],
+                        roadTypeValue: {
+                            text: '道路类型1',
+                            value: '1'
+                        },
+                        showMap: false,
+                        address: '',
+                        tel: ''
+                    }
+                }
+            },
+            computed: {
+                chuxianDateCH: function () {
+                    return formatDate(this.formData.chuxianDate, 'yyyy-MM-dd h:i')
+                }
+            },
+            created() {
+                this._applyPolicyNoByCarPlateNumber()
+            },
+            methods: {
+                sendsms() {
+                    var status = this.btnsms.disabled
+                    if (status) return;
+
+                    if (this.formData.tel === '') {
+                        vant.Toast('请输入手机号再发送验证码')
+                        return false;
+                    }
+                    this._applySendSMS();
+                    var countdown = 60;
+                    var settime = _ => {
+                        if (countdown === 0) {
+                            clearInterval(this.timer)
+                            this.btnsms.disabled = false
+                            this.btnsms.buttonText = '获取验证码'
+                            countdown = 60
+                            return
+                        } else {
+                            this.btnsms.disabled = true
+                            this.btnsms.buttonText = '重新发送(' + countdown + ')'
+                            countdown--
+                        }
+                    }
+                    settime()
+                    this.timer = setInterval(function () {
+                        settime()
+                    }, 1000)
+                },
+                _applySendSMS: function () {
+                    console.log('发送验证码')
+                },
+                // 选择地图事件
+                listenerMapMessage: function (e) {
+                    this.formData.address = e.data.address + ' ' + e.data.name
+                    this.formData.showMap = false
+                },
+                // 获取车辆信息
+                _applyPolicyNoByCarPlateNumber: function () {
+
+                    this.formData.policyNo = '20201027SYX0002';
+                    return;
+                    ajax.getPolicyNoByCarPlateNumber({ carNo: "黑MG8716" }).then(function (res) {
+                        // policyNo: "20201027SYX0002"
+                        if (res.data.code === '0') {
+
+                        }
+                        console.log(res)
+                    })
+                },
+                // 提交表单信息
+                _applySubmit: function () {
+                    var param = {
+                        "storeNo": "1",//机构编号
+                        "thirdUuid": "1",//第三方id
+                        "insuranceTime": formatDate(this.formData.chuxianDate, 'yyyy-MM-dd h:i'),//出险日期
+                        "carNo": this.formData.carNo,////出险人类型  车牌
+                        "policyNo": this.formData.policyNo,//统筹单号
+                        "isCasualties": this.formData.isCasualties.value,//有无人员伤亡
+                        "accidentAddress": this.formData.address,//事发地点
+                        "roadType": this.formData.roadTypeValue.value,//道路类型
+                        "siteAdd": this.formData.siteAdd,//地点补充
+                        "driver": this.formData.driver,//驾驶员
+                        "reporter": this.formData.reporter,//报案人
+                        "holderMobile": this.formData.reporter,//联系电话
+                        "note": this.formData.note,
+                        "smsCode": this.formData.smsCode,//校验码
+                    }
+                    console.log(param)
+                    return;
+                    // 少字段联系方式
+                    ajax.saveClientClaimApply(param).then(function (res) {
+                        console.log(res)
+                    })
+
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

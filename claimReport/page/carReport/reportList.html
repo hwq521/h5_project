@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>车辆报案</title>
+    <meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name="viewport"
+        id="viewport" />
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="keywords" content="">
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/common.js?v=1.01"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+    <link rel="stylesheet" href="../../css/claimReport/reportList.css">
+    <link rel="stylesheet" href="../../css/new-common.css">
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <ul class="filter-state-group">
+            <template v-for="(item,key) in stateList">
+                <li :key="key" :class="{active:stateValue === item.value}" @click="changeState(item)">{{item.label}}
+                </li>
+            </template>
+        </ul>
+        <div class="scroll-view" @scroll="scrollChange">
+            <ul class="card-group">
+                <template v-for="(item,key) in list.listData">
+                    <li class="card-item" :key="key">
+                        <div class="card-item-top">
+                            <div class="card-title">
+                                {{item.carNo}}
+                            </div>
+                            <div class="card-date">
+                                {{item.applyTime}}
+                            </div>
+                        </div>
+                        <div class="card-item-bottom">
+                            <!-- 01 待结案 02 已结案 03 处理中 -->
+                            <div class="card-state" :class="'state'+Number(item.frontApplyStateNo)">
+                                {{item.frontApplyStateName}}
+                            </div>
+                            <ul class="card-info-group">
+                                <li>
+                                    <div class="label">
+                                        报案人
+                                    </div>
+                                    <div class="value">
+                                        {{item.reporter}}
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="label">
+                                        联系电话
+                                    </div>
+                                    <div class="value">
+                                        {{item.holderMobile}}
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="label">
+                                        统筹单号
+                                    </div>
+                                    <div class="value">
+                                        {{item.policyNo}}
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="label">
+                                        报案单号
+                                    </div>
+                                    <div class="value">
+                                        {{item.claimNo}}
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </template>
+                <li class="no-list" v-if="list.loading">加载中...</li>
+                <li class="no-list" v-if="!list.loading&&list.end&&list.listData.length === 0">暂无数据</li>
+                <li class="no-list" v-if="!list.loading&&list.end&&list.listData.length > 0">——————已经到底了——————</li>
+            </ul>
+        </div>
+
+        <div class="btn-area">
+            <button class="btn btn-l btn-primary">报案</button>
+        </div>
+    </div>
+    <script type="text/javascript">
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    stateList: [{
+                        label: '全部',
+                        value: ''
+                    }, {
+                        label: '未结案',
+                        value: '1'
+                    }, {
+                        label: '已结案',
+                        value: '2'
+                    }],
+                    stateValue: '',
+                    list: {
+                        loading: false,
+                        end: false,
+                        nowPage: 1,
+                        pageShow: 10,
+                        listData: []
+                    }
+                }
+            },
+            created() {
+                this._applyList()
+            },
+            methods: {
+                changeState: function (i) {
+                    this.stateValue = i.value;
+                    this.list.end = false;
+                    this.list.nowPage = 1;
+                    this._applyList();
+                },
+                scrollChange: function (e) {
+                    var target = e.target
+                    if (target.scrollTop + target.offsetHeight >= target.scrollHeight) {
+                        this._applyList()
+                        //加载更多
+                    }
+                },
+                _applyList: function () {
+                    if (this.list.loading || this.list.end) return;
+                    var that = this;
+                    this.list.loading = true
+                    // setTimeout(function () {
+                    //     var result = that.setData(that.list.nowPage)
+                    //     if (result.nowPage === 1) {
+                    //         if (result.rows.length === 0) {
+                    //             that.list.end = true
+                    //         }
+                    //         that.list.listData = result.rows
+                    //     } else {
+                    //         if (result.rows.length === 0) {
+                    //             that.list.end = true
+                    //         } else {
+                    //             that.list.listData = that.list.listData.concat(result.rows)
+                    //         }
+                    //     }
+                    //     that.list.loading = false
+                    //     that.list.nowPage++
+                    // }, 500)
+                    // return;
+
+
+                    var param = {
+                        "nowPage": this.list.nowPage, //当前页数 必传
+                        "pageSize": this.list.pageShow,
+                        "frontState": this.stateValue, //0全部、1未结案、2已结案
+                    }
+                    this.list.loading = true
+                    ajax.getClientClaimApplyList(param).then(function (res) {
+                        if (res.data.code === '0') {
+                            var result = res.data.data.pages
+                            if (that.list.nowPage === 1) {
+                                if (result.rows.length === 0) {
+                                    that.list.end = true
+                                } else {
+                                    that.list.listData = result.rows
+                                }
+                            } else {
+                                if (result.rows.length === 0) {
+                                    that.list.end = true
+                                } else {
+                                    that.list.listData = that.list.listData.concat(result.rows)
+                                }
+                            }
+
+                            if (that.list.nowPage >= result.totalPage) {
+                                that.end = true;
+                            }
+                            that.list.nowPage++
+                        }
+                        that.list.loading = false
+                    }).catch(function () {
+                        that.list.loading = false
+                        that.list.end = true
+                    })
+                },
+                setData: function (nowPage) {
+                    var result = [],
+                        totalPage = 6,
+                        demo = {
+                            "adjustTotalClaimAmt": 0,
+                            "applyState": "02",
+                            "applyStateName": "案件已查勘",
+                            "applyTime": "2020-12-29 07:35",
+                            "applyTypeName": "",
+                            "carNo": "黑MA6362",
+                            "caseStatus": "01",
+                            "caseStatusName": "正常",
+                            "claimAmount": 0,
+                            "claimNo": "SH20200000013002",
+                            "frontApplyStateName": "处理中",
+                            "holderMobile": "18701536556",
+                            "holderName": "张瑞",
+                            "mapCondition": {},
+                            "policyNo": "20201113SYX0012",
+                            "reporter": "张瑞",
+                            "sheetRow": 0,
+                            "sortFieldName": "createTime",
+                            "sortType": "desc",
+                            "totalAuditAmt": 0,
+                            "totalReliefAmt": 0
+                        }
+                    for (var i = 0; i < 10; i++) {
+                        demo['state'] = String(Math.floor(Math.random() * 3 + 1))
+                        result.push(demo)
+                    }
+                    if (nowPage > totalPage) {
+                        result = []
+                        nowPage = totalPage
+                    }
+                    return {
+                        rows: result,
+                        nowPage: nowPage,
+                        pageShow: 10
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

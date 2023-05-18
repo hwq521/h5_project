@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>车辆报案</title>
+    <meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name="viewport"
+        id="viewport" />
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="keywords" content="">
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/common.js?v=1.01"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+    <link rel="stylesheet" href="../../css/new-common.css" />
+    <link rel="stylesheet" href="../../css/reportManagement/reportList.css" />
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+    <style type="text/css">
+        .scroll-view {
+            height: calc(100vh - 2.55rem);
+            overflow-x: hidden;
+            padding: 0 0.3rem;
+        }
+
+        .filter-view {
+            height: 1.25rem;
+        }
+
+        .filter-view .van-search__content {
+            background-color: #E6E6E6;
+        }
+
+        .card-item_to-detail {
+            position: absolute;
+            right: 0.2rem;
+            top: 0.3rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            background: url(../../img/report_icon1.png) center center/contain no-repeat;
+            font-size: 0.28rem;
+            padding: 0.22rem;
+            text-align: center;
+            color: #fff;
+        }
+
+        .card-item_to-detail:after {
+            content: '查勘登记';
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="filter-view">
+            <van-search v-model="searchKey" background="#F3F4F8" show-action shape="round" placeholder="请输入搜索关键词"
+                @search="onSearch">
+                <template #action>
+                    <div @click="onSearch">搜索</div>
+                </template>
+            </van-search>
+        </div>
+        <div class="scroll-view" @scroll="scrollChange">
+            <ul class="card-group">
+                <template v-for="(item,key) in list.listData">
+                    <li class="card-item" :key="key">
+                        <div class="card-item-top">
+                            <div class="card-state" :class="'state'+item.caseStatusName">
+                                {{item.caseStatusName}}
+                            </div>
+                            <div class="card-title">
+                                {{item.carNo}}
+                            </div>
+                        </div>
+                        <div class="card-item-bottom">
+                            <div class="card-item_to-detail"></div>
+                            <ul class="card-info-group">
+                                <li>
+                                    <div class="label">
+                                        报案人
+                                    </div>
+                                    <div class="value">
+                                        {{item.holderName}}
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="label">
+                                        联系电话
+                                    </div>
+                                    <div class="value">
+                                        {{item.holderMobile}}
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="label">
+                                        统筹单号
+                                    </div>
+                                    <div class="value">
+                                        {{item.policyNo}}
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="label">
+                                        报案单号
+                                    </div>
+                                    <div class="value">
+                                        {{item.claimNo}}
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-item-btn">
+                            <button class="btn btn-s btn-danger">驳回</button>
+                            <div class="card-item-btn_r"><button class="btn btn-s btn-warn">便捷拍照</button>
+                                <button class="btn btn-s btn-primary">联系车主</button>
+                            </div>
+
+                        </div>
+                    </li>
+                </template>
+                <li class="no-list" v-if="list.loading">加载中...</li>
+                <li class="no-list" v-if="!list.loading&&list.end&&list.listData.length === 0">暂无数据</li>
+                <li class="no-list" v-if="!list.loading&&list.end&&list.listData.length > 0">——————已经到底了——————</li>
+            </ul>
+        </div>
+
+        <div class="btn-area">
+            <button class="btn btn-l btn-primary" @click="showState = true">状态查询</button>
+        </div>
+
+        <vant-picker v-model="showState" :columns="stateList" :column.sync="stateValue" @onconfirm="changeState">
+        </vant-picker>
+    </div>
+    <script src="../../js/vueComponents/vantPicker.js"></script>
+    <script type="text/javascript">
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    searchKey: '',
+                    copySearchKey: '',
+                    list: {
+                        loading: false,
+                        end: false,
+                        nowPage: 1,
+                        pageShow: 10,
+                        listData: []
+                    },
+                    showState: false,
+                    // 01、接报状态 02、查勘状态 03、核价状态 04、理算状态 05、审批状态
+                    stateList: [{
+                        text: '全部',
+                        value: ''
+                    },
+                    {
+                        text: '接报',
+                        value: '01'
+                    },
+                    {
+                        text: '查勘',
+                        value: '02'
+                    },
+                    {
+                        text: '核价',
+                        value: '03'
+                    },
+                    {
+                        text: '理算',
+                        value: '04'
+                    },
+                    {
+                        text: '审批',
+                        value: '05'
+                    },
+                    ],
+                    stateValue: {
+                        label: '全部',
+                        value: ''
+                    }
+                }
+            },
+            created() {
+                this._applyList()
+            },
+            methods: {
+                changeState: function () {
+                    this.list.nowPage = 1;
+                    this.list.end = false;
+                    this._applyList();
+                },
+                onSearch: function () {
+                    this.copySearchKey = this.searchKey;
+                    this.list.nowPage = 1;
+                    this.list.end = false;
+                    this._applyList();
+                },
+                scrollChange: function (e) {
+                    var target = e.target
+                    if (target.scrollTop + target.offsetHeight >= target.scrollHeight) {
+                        this._applyList()
+                        //加载更多
+                    }
+                },
+                setListData(nowPage, pageSize) {
+                    var result = [];
+                    var totalPage = 3;
+                    console.log(nowPage)
+                    for (var i = 0; i < pageSize; i++) {
+                        result.push({
+                            "adjustTotalClaimAmt": 0,
+                            "applyStateName": "正常",
+                            "applyTime": "2021-01-05 11:32",
+                            "applyTypeName": "",
+                            "carNo": "黑AM6T80",
+                            "caseStatus": "0",
+                            "caseStatusName": "正常",
+                            "claimAmount": 0,
+                            "claimNo": "SH20210000000005",
+                            "holderMobile": "2021-01-05 11:35",
+                            "holderName": "",
+                            "mapCondition": {},
+                            "policyNo": "刘建峰",
+                            "sheetRow": 0,
+                            "sortFieldName": "createTime",
+                            "sortType": "desc",
+                            "totalAuditAmt": 0,
+                            "totalReliefAmt": 0
+                        })
+                    }
+                    if (nowPage > totalPage) {
+                        nowPage = totalPage
+                        result = []
+                    }
+                    return {
+                        nowPage: nowPage,
+                        pageSize: pageSize,
+                        totalNum: pageSize * nowPage,
+                        rows: result,
+                        totalPage: totalPage
+                    }
+                },
+                _applyList: function () {
+                    if(this.list.end||this.list.loading)return;
+                    var that = this;
+                    var param = {
+                        "applyManUuid": 'fa3ece4e3c7e44db82705fec586c87e2', //勘查员uuid 多个用“,”隔开 
+                        "nowPage": this.list.nowPage, //当前页数 必传
+                        "pageSize": this.list.pageShow,
+                        "applyState": this.stateValue.value, //案件进展状态  01、接报状态 02、查勘状态 03、核价状态 04、理算状态 05、审批状态
+                        "searchKey": ''
+                    }
+                    if (this.copySearchKey !== '') {
+                        param.searchKey = this.copySearchKey
+                    }
+
+                    this.list.loading = true
+
+                    setTimeout(function () {
+                        var result = that.setListData(that.list.nowPage, that.list.pageShow)
+                        if (that.list.nowPage === 1) {
+                            if (result.rows.length === 0) {
+                                that.list.end = true
+                            } else {
+                                that.list.listData = result.rows
+                            }
+                        } else {
+                            if (result.rows.length === 0) {
+                                that.list.end = true
+                            } else {
+                                that.list.listData = that.list.listData.concat(result.rows)
+                            }
+                        }
+                        that.list.nowPage++
+                        that.list.loading = false
+                    }, 1000)
+                    return;
+                    ajax.getReportManagementList(param).then(function (res) {
+                        if (res.data.code === '0') {
+                            var result = res.data.data.pages
+                            if (that.list.nowPage === 1) {
+                                if (result.rows.length === 0) {
+                                    that.list.end = true
+                                } else {
+                                    that.list.listData = result.rows
+                                }
+                            } else {
+                                if (result.rows.length === 0) {
+                                    that.list.end = true
+                                } else {
+                                    that.list.listData = that.list.listData.concat(result.rows)
+                                }
+                            }
+                            that.list.nowPage++
+                        }
+                        that.list.loading = false
+                    }).catch(function () {
+                        that.list.loading = false
+                        that.list.end = true
+                    })
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

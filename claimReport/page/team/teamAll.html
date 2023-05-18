@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的团队</title>
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/common.js?v=1.01"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+    <link rel="stylesheet" href="../../css/team/style.css" />
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+    <style>
+        body {
+            background: url(../../img/team/team_index_bg.png) no-repeat center top #F3F4F8;
+            background-size: 100% 150px;
+        }
+
+
+        .title-card {
+            width: 130px;
+            padding: 14px 0;
+            background-color: #fff;
+            border-radius: 6px;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+            margin-top: 20px;
+        }
+
+        .title-card img {
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        .title-card span {
+            font-size: 14px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="title-card">
+            <img src="../../img/team/title-icon.png">
+            <span>一代育成主管</span>
+        </div>
+        <div class="content-box space-margin">
+            <ul class="person-group">
+                <template v-for="(item,key) in NurturingDirectors">
+                    <li>
+                        <a href="./personalBusiness.html">
+                            <img :src="item.portrait">
+                            <h5>{{item.name}}</h5>
+                        </a>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    NurturingDirectors: [], // 主管
+                }
+            },
+            created() {
+                this.getNurturingDirectors()
+            },
+            methods: {
+                // 主管
+                getNurturingDirectors: function () {
+                    var that = this;
+                    var res = { "code": "0", "data": { "NurturingDirectors": [{ "employeeNumber": "ceshi1", "mapCondition": {}, "name": "测试1", "portrait": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }, { "employeeNumber": "ceshi2", "mapCondition": {}, "name": "测试2", "portrait": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }, { "employeeNumber": "ceshi3", "mapCondition": {}, "name": "测试3", "portrait": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }, { "employeeNumber": "ceshi4", "mapCondition": {}, "name": "测试4", "portrait": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }, { "employeeNumber": "ceshi5", "mapCondition": {}, "name": "测试5", "portrait": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }] }, "message": "成功", "msg": "成功" };
+                    // console.log(res)
+                    if (res.code === '0') {
+                        that.NurturingDirectors = res.data.NurturingDirectors
+                    }
+                    return;
+                    ajax.getNurturingDirectors({ erpuuid: '111' }).then(function (res) {
+                        if (res.data.code === '0') {
+                            that.NurturingDirectors = res.data.data.NurturingDirectors
+                        }
+                    })
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

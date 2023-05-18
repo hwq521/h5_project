@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>报案单管理</title>
+    <meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name="viewport" id="viewport" />
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="keywords" content="">
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <link rel="stylesheet" type="text/css" href="../../css/new-common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/customer-form.css" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+    <style>
+        .form-item .value {
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <step :step="2"></step>
+        <ul class="form-group">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_1.png" class="form-title-icon">
+                <div class="form-title">车辆情况</div>
+            </li>
+            <li class="form-item">
+                <div class="label">统筹单号</div>
+                <div class="value">ad34234234</div>
+            </li>
+            <li class="form-item">
+                <div class="label">被统筹人姓名</div>
+                <div class="value">哈哈哈</div>
+            </li>
+            <li class="form-item">
+                <div class="label">被统筹车辆</div>
+                <div class="value">闽ED1231</div>
+            </li>
+            <li class="form-item">
+                <div class="label">车架号</div>
+                <div class="value">SDW24324324</div>
+            </li>
+            <li class="form-item">
+                <div class="label">厂牌型号</div>
+                <div class="value">SWQ32423</div>
+            </li>
+            <li class="form-item">
+                <div class="label">发动机号</div>
+                <div class="value">PJ342343</div>
+            </li>
+            <li class="form-item">
+                <div class="label">初次登记时间</div>
+                <div class="value">2021-4-19</div>
+            </li>
+        </ul>
+
+        <ul class="form-group">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_2.png" class="form-title-icon">
+                <div class="form-title">统筹信息</div>
+            </li>
+            <li class="form-item">
+                <div class="label">统筹日期</div>
+                <div class="value">ad34234234</div>
+            </li>
+            <li class="form-item">
+                <div class="label">统筹起始时间</div>
+                <div class="value">2021-4-19 14:52:33</div>
+            </li>
+            <li class="form-item">
+                <div class="label">统筹截止时间</div>
+                <div class="value">2021-4-19 14:52:37</div>
+            </li>
+        </ul>
+
+        <ul class="form-group">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_3.png" class="form-title-icon">
+                <div class="form-title">特别约定</div>
+            </li>
+            <li class="form-item">
+                <div class="form-item_rig">ad34234234ad34234234 ad34234234ad34234234ad34234234ad34234234ad34 234234ad34234234ad34234234ad34234234ad34234234
+                </div>
+            </li>
+        </ul>
+
+        <ul class="form-group">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_4.png" class="form-title-icon">
+                <div class="form-title">参统人信息</div>
+            </li>
+            <li class="form-item">
+                <div class="label">参统人姓名</div>
+                <div class="value">何先生</div>
+            </li>
+            <li class="form-item">
+                <div class="label">证件类型</div>
+                <div class="value">身份证</div>
+            </li>
+            <li class="form-item">
+                <div class="label">证件号码</div>
+                <div class="value">123456123456123456123456</div>
+            </li>
+            <li class="form-item">
+                <div class="label">手机号</div>
+                <div class="value">16312341234</div>
+            </li>
+            <li class="form-item">
+                <div class="label">居住地</div>
+                <div class="value">123456123456123456123456</div>
+            </li>
+        </ul>
+
+        <ul class="form-group">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_5.png" class="form-title-icon">
+                <div class="form-title">被统人信息</div>
+            </li>
+            <li class="form-item">
+                <div class="label">被统人姓名</div>
+                <div class="value">何先生</div>
+            </li>
+            <li class="form-item">
+                <div class="label">证件类型</div>
+                <div class="value">身份证</div>
+            </li>
+            <li class="form-item">
+                <div class="label">证件号码</div>
+                <div class="value">123456123456123456123456</div>
+            </li>
+            <li class="form-item">
+                <div class="label">手机号</div>
+                <div class="value">16312341234</div>
+            </li>
+            <li class="form-item">
+                <div class="label">居住地</div>
+                <div class="value">123456123456123456123456</div>
+            </li>
+        </ul>
+
+        <ul class="form-group">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_5.png" class="form-title-icon">
+                <div class="form-title">车辆信息</div>
+            </li>
+            <li class="form-item">
+                <div class="label">车牌号</div>
+                <div class="value">黑123123</div>
+            </li>
+            <li class="form-item">
+                <div class="label">车架号</div>
+                <div class="value">QWE324234</div>
+            </li>
+            <li class="form-item">
+                <div class="label">厂牌型号</div>
+                <div class="value">WQ3456123456</div>
+            </li>
+            <li class="form-item">
+                <div class="label">发动机号</div>
+                <div class="value">16312341234</div>
+            </li>
+            <li class="form-item">
+                <div class="label">车辆性质</div>
+                <div class="value">123456123456123456123456</div>
+            </li>
+            <li class="form-item">
+                <div class="label">车辆种类</div>
+                <div class="value">十吨以上货车</div>
+            </li>
+            <li class="form-item">
+                <div class="label">核定质量</div>
+                <div class="value">3000</div>
+            </li>
+            <li class="form-item">
+                <div class="label">核定人数</div>
+                <div class="value">2</div>
+            </li>
+            <li class="form-item">
+                <div class="label">车辆价格</div>
+                <div class="value">1200000</div>
+            </li>
+            <li class="form-item">
+                <div class="label">等级日期</div>
+                <div class="value">2021-04-19</div>
+            </li>
+        </ul>
+
+        <ul class="form-group">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_6.png" class="form-title-icon">
+                <div class="form-title">统筹种类信息</div>
+            </li>
+            <li class="form-item form-item-table">
+                <table class="form-table">
+                    <tr>
+                        <th>统筹项目</th>
+                        <th>不计免赔</th>
+                        <th>统筹额度</th>
+                    </tr>
+                    <tr>
+                        <td>机动车损失统筹</td>
+                        <td>哈哈</td>
+                        <td>嘿嘿</td>
+                    </tr>
+                    <tr>
+                        <td>机动车损失统筹</td>
+                        <td>哈哈</td>
+                        <td>嘿嘿</td>
+                    </tr>
+                </table>
+            </li>
+        </ul>
+
+        <div class="btn-form-area">
+            <button class="btn btn-l btn-primary">下一步</button>
+        </div>
+    </div>
+    <script src="../../js/vueComponents/step.component.js"></script>
+    <script>
+        new Vue({
+            el: '#app'
+        })
+    </script>
+</body>
+
+</html>

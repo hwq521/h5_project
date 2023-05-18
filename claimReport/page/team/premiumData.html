@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>保费数据</title>
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/common.js?v=1.01"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+    <link rel="stylesheet" href="../../css/team/style.css" />
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="data-card">
+            <div class="userinfo">
+                <img src="../../img/1.PNG" class="head-img">
+                <div class="userinfo_rig">
+                    <div class="name">黄小芳</div>
+                    <div class="job">高级业务经理</div>
+                </div>
+            </div>
+            <div class="data-card-header">
+                <div class="filter-month">
+                    <team-date-picker v-model="date.achievementDate" @onchange="getAchievementInfos"></team-date-picker>
+                </div>
+                <div class="data-card-title">
+                    寿险首年业绩
+                </div>
+                <div class="data-card-unit">
+                    单位：万元
+                </div>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <td>个人数据</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td>预收数据</td>
+                        <td>承保数据</td>
+                        <td>已复核</td>
+                    </tr>
+                    <template v-for="(item,key) in achievementInfos.PersonAchievementInfos">
+                        <tr :key="key">
+                            <td>{{item.achievementType}}</td>
+                            <td>{{item.reviewedData}}</td>
+                            <td>{{item.underwritingData}}</td>
+                            <td>{{item.advanceCollected}}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <td>团队数据</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td>预收数据</td>
+                        <td>承保数据</td>
+                        <td>已复核</td>
+                    </tr>
+                    <template v-for="(item,key) in achievementInfos.TeamAchievementInfos">
+                        <tr :key="key">
+                            <td>{{item.achievementType}}</td>
+                            <td>{{item.reviewedData}}</td>
+                            <td>{{item.underwritingData}}</td>
+                            <td>{{item.advanceCollected}}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="data-card">
+            <div class="data-card-header">
+                <div class="filter-month">
+                    <team-date-picker v-model="date.nocarPolicyDate" @onchange="getNocarPolicyInfos"></team-date-picker>
+                </div>
+                <div class="data-card-title">
+                    非车险业务
+                </div>
+                <div class="data-card-unit">
+                    单位：万元
+                </div>
+            </div>
+            <table class="data-table">
+                <tbody>
+                    <tr>
+                        <td rowspan="2" class="theme-color">个人数据</td>
+                        <td>保费数据</td>
+                        <td>当月结佣</td>
+                    </tr>
+                    <template v-for="(item,key) in nocarPolicyInfos.PersonNocarPolicyInfos">
+                        <tr>
+                            <td>{{item.commission}}</td>
+                            <td>{{item.premium}}</td>
+                        </tr>
+                    </template>
+                    <tr>
+                        <td rowspan="2" class="theme-color">团队数据</td>
+                        <td>保费数据</td>
+                        <td>当月结佣</td>
+                    </tr>
+                    <template v-for="(item,key) in nocarPolicyInfos.TeamNocarPolicyInfos">
+                        <tr>
+                            <td>{{item.commission}}</td>
+                            <td>{{item.premium}}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+        <div class="data-card">
+            <div class="data-card-header">
+                <div class="filter-month">
+                    <team-date-picker v-model="date.carPolicyDate" @onchange="getCarPolicyInfos"></team-date-picker>
+                </div>
+                <div class="data-card-title">
+                    车险业务
+                </div>
+                <div class="data-card-unit">
+                    单位：万元
+                </div>
+            </div>
+            <table class="data-table">
+                <tbody>
+                    <tr>
+                        <td rowspan="2" class="theme-color">个人数据</td>
+                        <td>保费数据</td>
+                        <td>当月结佣</td>
+                    </tr>
+                    <template v-for="(item,key) in carPolicyInfos.PersonCarPolicyInfos">
+                        <tr>
+                            <td>{{item.commission}}</td>
+                            <td>{{item.premium}}</td>
+                        </tr>
+                    </template>
+                    <tr>
+                        <td rowspan="2" class="theme-color">团队数据</td>
+                        <td>保费数据</td>
+                        <td>当月结佣</td>
+                    </tr>
+                    <template v-for="(item,key) in carPolicyInfos.TeamCarPolicyInfos">
+                        <tr>
+                            <td>{{item.commission}}</td>
+                            <td>{{item.premium}}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+        <div class="data-card">
+            <div class="data-card-header">
+                <div class="filter-month">
+                    <team-date-picker v-model="date.internetPolicyDate" @onchange="getInternetPolicyInfos">
+                    </team-date-picker>
+                </div>
+                <div class="data-card-title">
+                    互联网业务
+                </div>
+                <div class="data-card-unit">
+                    单位：万元
+                </div>
+            </div>
+            <table class="data-table">
+                <tbody>
+                    <tr>
+                        <td rowspan="2" class="theme-color">个人数据</td>
+                        <td>保费数据</td>
+                        <td>当月结佣</td>
+                    </tr>
+                    <template v-for="(item,key) in internetPolicyInfos.PersonInternetPolicyInfos">
+                        <tr>
+                            <td>{{item.commission}}</td>
+                            <td>{{item.premium}}</td>
+                        </tr>
+                    </template>
+                    <tr>
+                        <td rowspan="2" class="theme-color">团队数据</td>
+                        <td>保费数据</td>
+                        <td>当月结佣</td>
+                    </tr>
+                    <template v-for="(item,key) in internetPolicyInfos.TeamInternetPolicyInfos">
+                        <tr>
+                            <td>{{item.commission}}</td>
+                            <td>{{item.premium}}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+
+        <van-overlay :show="loading">
+            <van-loading vertical color="#fff">加载中...</van-loading>
+        </van-overlay>
+    </div>
+    <script src="../../js/common_utils.js"></script>
+    <script src="../../js/vueComponents/vantDatePicker.js"></script>
+    <script src="../../js/vueComponents/teamDatePicker.component.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    loading: false,
+                    date: {
+                        achievementDate: new Date(),
+                        nocarPolicyDate: new Date(),
+                        carPolicyDate: new Date(),
+                        internetPolicyDate: new Date(),
+                    },
+                    achievementInfos: {
+                        PersonAchievementInfos: [],
+                        TeamAchievementInfos: [],
+                    },
+                    nocarPolicyInfos: {
+                        PersonNocarPolicyInfos: [],
+                        TeamNocarPolicyInfos: [],
+                    },
+                    carPolicyInfos: {
+                        PersonCarPolicyInfos: [],
+                        TeamCarPolicyInfos: [],
+                    },
+                    internetPolicyInfos: {
+                        PersonInternetPolicyInfos: [],
+                        TeamInternetPolicyInfos: [],
+                    },
+                }
+            },
+            created() {
+                this.getAchievementInfos();
+                this.getNocarPolicyInfos();
+                this.getCarPolicyInfos();
+                this.getInternetPolicyInfos();
+            },
+            methods: {
+                // 团队业绩
+                getAchievementInfos: function () {
+                    var that = this;
+                    var res = { "code": "0", "data": { "PersonAchievementInfos": [{ "achievementType": "规模保费", "advanceCollected": 30.28, "belongType": "", "reviewedData": 25, "underwritingData": 28.28 }, { "achievementType": "价值保费", "advanceCollected": 30.28, "belongType": "", "reviewedData": 25, "underwritingData": 28.28 }, { "achievementType": "件数", "advanceCollected": 30.28, "belongType": "", "reviewedData": 25, "underwritingData": 28.28 }, { "achievementType": "FYC", "advanceCollected": 30.28, "belongType": "", "reviewedData": 25, "underwritingData": 28.28 }], "TeamAchievementInfos": [{ "achievementType": "规模保费", "advanceCollected": 30.28, "belongType": "", "reviewedData": 25, "underwritingData": 28.28 }, { "achievementType": "价值保费", "advanceCollected": 30.28, "belongType": "", "reviewedData": 25, "underwritingData": 28.28 }, { "achievementType": "件数", "advanceCollected": 30.28, "belongType": "", "reviewedData": 25, "underwritingData": 28.28 }, { "achievementType": "FYC", "advanceCollected": 30.28, "belongType": "", "reviewedData": 25, "underwritingData": 28.28 }] }, "message": "成功", "msg": "成功" }
+                    if (res.code == '0') {
+                        that.achievementInfos = res.data;
+                    }
+                    return;
+                    var param = {
+                        erpuuid: 'erpuuid',
+                        dataTime: formatDate(this.date.achievementDate, 'yyyy-MM')
+                    }
+                    ajax.getAchievementInfos(param).then(function (res) {
+                        if (res.data.code == '0') {
+                            that.achievementInfos = res.data.data;
+                        }
+                    })
+                },
+                getNocarPolicyInfos: function () {
+                    var that = this;
+                    var res = { "code": "0", "data": { "PersonNocarPolicyInfos": [{ "belongType": "", "commission": 28.28, "mapCondition": {}, "policyType": "非车险", "premium": 30.28, "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }], "TeamNocarPolicyInfos": [{ "belongType": "", "commission": 28.28, "mapCondition": {}, "policyType": "非车险", "premium": 30.28, "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }] }, "message": "成功", "msg": "成功" };
+
+                    if (res.code === '0') {
+                        that.nocarPolicyInfos = res.data
+                    }
+                    return;
+                    var param = {
+                        erpuuid: 'erpuuid',
+                        dataTime: formatDate(this.date.nocarPolicyDate, 'yyyy-MM')
+                    }
+                    ajax.getNocarPolicyInfos(param).then(function (res) {
+                        if (res.data.code === '0') {
+                            that.nocarPolicyInfos = res.data.data
+                        }
+                    })
+                },
+                getCarPolicyInfos: function () {
+                    var that = this;
+                    var res = { "code": "0", "data": { "PersonCarPolicyInfos": [{ "belongType": "", "commission": 28.28, "mapCondition": {}, "policyType": "车险", "premium": 30.28, "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }], "TeamCarPolicyInfos": [{ "belongType": "", "commission": 28.28, "mapCondition": {}, "policyType": "车险", "premium": 30.28, "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }] }, "message": "成功", "msg": "成功" };
+
+                    if (res.code === '0') {
+                        that.carPolicyInfos = res.data
+                    }
+                    return;
+                    var param = {
+                        erpuuid: 'erpuuid',
+                        dataTime: formatDate(this.date.carPolicyDate, 'yyyy-MM')
+                    }
+                    ajax.getCarPolicyInfos(param).then(function (res) {
+                        if (res.data.code === '0') {
+                            that.carPolicyInfos = res.data.data
+                        }
+                    })
+                },
+                getInternetPolicyInfos: function () {
+                    var that = this;
+                    var res = { "code": "0", "data": { "PersonInternetPolicyInfos": [{ "belongType": "", "commission": 28.28, "mapCondition": {}, "policyType": "互联网", "premium": 30.28, "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }], "TeamInternetPolicyInfos": [{ "belongType": "", "commission": 28.28, "mapCondition": {}, "policyType": "互联网", "premium": 30.28, "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }] }, "message": "成功", "msg": "成功" };
+                    if (res.code === '0') {
+                        that.internetPolicyInfos = res.data
+                    }
+                    return;
+                    var param = {
+                        erpuuid: 'erpuuid',
+                        dataTime: formatDate(this.date.internetPolicyDate, 'yyyy-MM')
+                    }
+                    ajax.getInternetPolicyInfos(param).then(function (res) {
+                        if (res.data.code === '0') {
+                            that.internetPolicyInfos = res.data.data
+                        }
+                    })
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

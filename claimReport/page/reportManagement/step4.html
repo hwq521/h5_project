@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>报案单管理</title>
+    <meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name="viewport" id="viewport" />
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="keywords" content="">
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <link rel="stylesheet" type="text/css" href="../../css/new-common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/customer-form.css" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+    <style>
+        .form-group .form-item .value:not(textarea) {
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <step :step="4"></step>
+        <ul class="form-group">
+            <li class="form-item form-item_required">
+                <div class="label">车牌号</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">车架号</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">厂牌型号</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">发动机号</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">车辆品牌</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">车辆款式</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+        </ul>
+        <ul class="form-group">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_5.png" class="form-title-icon">
+                <div class="form-title">配件部分</div>
+            </li>
+            <template v-for="(item,key) in peijian">
+            <li class="form-item" v-if="key > 0">
+            </li>
+            <li class="form-item">
+                <div class="label">种类</div>
+                <input type="text" v-model="peijian[key].cate" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item">
+                <div class="label">配件名称</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item">
+                <div class="label">价格方案</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item">
+                <div class="label">数量</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item">
+                <div class="label">金额</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item">
+                <div class="label">核价金额</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item">
+                <div class="label">操作员</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item">
+                <div class="label">备注</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <van-button type="warning" block @click="delPeijian(key)" v-if="peijian.length > 1">删除</van-button>
+        </template>
+            <li class="form-item" @click="addPeijian">
+                <img src="../../img/add.png" class="add-new-list">
+            </li>
+            <li class="form-item">
+                <div class="label">配件合计</div>
+                <input type="text" class="value" placeholder="23124123">
+            </li>
+            <li class="form-item">
+                <div class="label">残值</div>
+                <input type="text" class="value" placeholder="123">
+            </li>
+        </ul>
+        <ul class="form-group">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_5.png" class="form-title-icon">
+                <div class="form-title">工时部分</div>
+            </li>
+            <template v-for="(item,key) in peijian">
+            <li class="form-item" v-if="key > 0">
+            </li>
+            <li class="form-item">
+                <div class="label">种类</div>
+                <input type="text" v-model="peijian[key].cate" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item">
+                <div class="label">配件名称</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item">
+                <div class="label">价格方案</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item">
+                <div class="label">数量</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item">
+                <div class="label">金额</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item">
+                <div class="label">核价金额</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item">
+                <div class="label">操作员</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item">
+                <div class="label">备注</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <van-button type="warning" block @click="delPeijian(key)" v-if="peijian.length > 1">删除</van-button>
+        </template>
+            <li class="form-item" @click="addPeijian">
+                <img src="../../img/add.png" class="add-new-list">
+            </li>
+            <li class="form-item">
+                <div class="label">施救费</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item">
+                <div class="label">总计</div>
+                <input type="text" class="value" placeholder="请输入">
+            </li>
+            <li class="form-item">
+                <div class="label">定质说明</div>
+                <textarea class="value input-bg" cols="4" rows="4"></textarea>
+            </li>
+        </ul>
+        <div class="btn-form-area">
+            <button class="btn btn-l btn-primary">下一步</button>
+        </div>
+    </div>
+    <script src="../../js/vueComponents/step.component.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    peijian: [{
+                        cate: ''
+                    }],
+                    gongshi: [{
+                        cate: ''
+                    }],
+                }
+            },
+            methods: {
+                addPeijian: function() {
+                    this.peijian.push({
+                        cate: ''
+                    })
+                },
+                delPeijian: function(k) {
+                    this.peijian.splice(k, 1)
+                },
+                addGongshi: function() {
+                    this.gongshi.push({
+                        cate: ''
+                    })
+                },
+                delGongshi: function(k) {
+                    this.gongshi.splice(k, 1)
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

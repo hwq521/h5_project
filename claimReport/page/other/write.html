@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div><button id="clearCanvas">清除</button>
+        <button id="saveCanvas">保存</button>
+    </div>
+    <div id="canvas" width="300" height="500" style="border: 1px solid #000;"></div>
+
+    <script>
+        window.onload = function () {
+            new lineCanvas({
+                el: document.getElementById("canvas"),//绘制canvas的父级div
+                clearEl: document.getElementById("clearCanvas"),//清除按钮
+                saveEl: document.getElementById("saveCanvas"),//保存按钮
+                //      linewidth:1,//线条粗细，选填
+                //      color:"black",//线条颜色，选填
+                //      background:"#ffffff"//线条背景，选填
+            });
+        };
+        function lineCanvas(obj) {
+            this.linewidth = 1;
+            this.color = "#000000";
+            this.background = "#ffffff";
+            for (var i in obj) {
+                this[i] = obj[i];
+            };
+            this.canvas = document.createElement("canvas");
+            this.el.appendChild(this.canvas);
+            this.cxt = this.canvas.getContext("2d");
+            this.canvas.width = this.el.clientWidth;
+            this.canvas.height = this.el.clientHeight;
+            this.cxt.fillStyle = this.background;
+            this.cxt.fillRect(0, 0, this.canvas.width, this.canvas.width);
+            this.cxt.strokeStyle = this.color;
+            this.cxt.lineWidth = this.linewidth;
+            this.cxt.lineCap = "round";
+            //开始绘制
+            this.canvas.addEventListener("touchstart", function (e) {
+                this.cxt.beginPath();
+                this.cxt.moveTo(e.changedTouches[0].pageX, e.changedTouches[0].pageY);
+            }.bind(this), false);
+            //绘制中
+            this.canvas.addEventListener("touchmove", function (e) {
+                this.cxt.lineTo(e.changedTouches[0].pageX, e.changedTouches[0].pageY);
+                this.cxt.stroke();
+            }.bind(this), false);
+            //结束绘制
+            this.canvas.addEventListener("touchend", function () {
+                this.cxt.closePath();
+            }.bind(this), false);
+            //清除画布
+            this.clearEl.addEventListener("click", function () {s
+                this.cxt.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            }.bind(this), false);
+            //保存图片，直接转base64
+            this.saveEl.addEventListener("click", function () {
+                var imgBase64 = this.canvas.toDataURL();
+                console.log(imgBase64);
+            }.bind(this), false);
+        };
+
+        /*
+
+        // 拼出来的图片的宽度
+        const width = 300;
+        // 拼出来的图片的质量，0-1之间，越大质量越好
+        const encoderOptions = 1;
+        // 图片选择输入框
+        const uploadInput = document.getElementById('uploadInput');
+        // 图片展示框
+        const imageBox = document.getElementById('imageBox');
+
+
+
+
+        // filesToInstances(files, instances => {
+        //         drawImages(instances, finalImageUrl => {
+        //             imageBox.innerHTML = `<img src=${finalImageUrl}><a download href=${finalImageUrl}>点击下载</a>`;
+        //         });
+        //     });
+
+
+        var drawImages = (images, callback) => {
+            const heights = images.map(item => width / item.width * item.height); // 计算获取每个图片文件根据指定width后的高度
+            const canvas = document.createElement('canvas'); // 创建canvas元素
+            canvas.width = width; // canvas宽度
+            canvas.height = heights.reduce((total, current) => total + current); // 计算heights数组元素相加后的总和为canvas的高度
+            const context = canvas.getContext('2d'); // 创建渲染
+            let y = 0; // canvas Y轴坐标
+
+            // 遍历图片实例数组
+            images.forEach((item, index) => {
+                const height = heights[index];
+                context.drawImage(item, 0, y, width, height);
+                y += height; // Y轴坐标加上上一张图片高度
+            });
+
+            // canvas数据放到回调函数
+            callback(canvas.toDataURL('image/jpeg', encoderOptions));
+        }
+
+        var filesToInstances = (files, callback) => {
+            const length = files.length; // 图片路径个数
+            let instances = []; // 文件实例数组
+            let finished = 0; // 转换成功个数
+
+            // 遍历图片路径数组
+            files.forEach((file, index) => {
+                const image = new Image();
+                image.src = file; // 赋值图片路径
+                image.onload = () => {
+                    // 图片实例化成功后存起来
+                    instances[index] = image;
+                    finished++;
+                    if (finished === length) { // 如果全部完成转换，调用回调函数
+                        callback(instances);
+                    }
+                }
+            });
+        }
+        */
+    </script>
+</body>
+
+</html>

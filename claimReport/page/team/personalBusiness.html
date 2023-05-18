@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>员工业绩</title>
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/common.js?v=1.01"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+    <link rel="stylesheet" href="../../css/team/style.css" />
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="data-card">
+            <div class="userinfo">
+                <img src="../../img/1.PNG" class="head-img">
+                <div class="userinfo_rig">
+                    <div class="name">黄小芳</div>
+                    <div class="job">高级业务经理</div>
+                </div>
+            </div>
+
+            <div class="data-card-header">
+                <div class="filter-month">
+                    <team-date-picker v-model="date.achievementDate" @onchange="getAchievementInfos"></team-date-picker>
+                </div>
+                <div class="data-card-title">
+                    寿险首年业绩
+                </div>
+                <div class="data-card-unit">
+                    单位：万元
+                </div>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <td>个人数据</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td>预收数据</td>
+                        <td>承保数据</td>
+                        <td>已复核</td>
+                    </tr>
+                    <template v-for="(item,key) in achievementInfos.PersonAchievementInfos">
+                        <tr :key="key">
+                            <td>{{item.achievementType}}</td>
+                            <td>{{item.reviewedData}}</td>
+                            <td>{{item.underwritingData}}</td>
+                            <td>{{item.advanceCollected}}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <td>团队数据</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td>预收数据</td>
+                        <td>承保数据</td>
+                        <td>已复核</td>
+                    </tr>
+                    <template v-for="(item,key) in achievementInfos.TeamAchievementInfos">
+                        <tr :key="key">
+                            <td>{{item.achievementType}}</td>
+                            <td>{{item.reviewedData}}</td>
+                            <td>{{item.underwritingData}}</td>
+                            <td>{{item.advanceCollected}}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+        <div class="data-card">
+            <div class="data-card-header">
+                <div class="filter-month">
+                    <team-date-picker v-model="date.nocarPolicyDate" @onchange="getNocarPolicyInfos"></team-date-picker>
+                </div>
+                <div class="data-card-title">
+                    非车险业务
+                </div>
+                <div class="data-card-unit">
+                    单位：万元
+                </div>
+            </div>
+            <table class="data-table">
+                <tbody>
+                    <tr>
+                        <td rowspan="2" class="theme-color">个人数据</td>
+                        <td>保费数据</td>
+                        <td>当月结佣</td>
+                    </tr>
+                    <template v-for="(item,key) in nocarPolicyInfos.PersonNocarPolicyInfos">
+                        <tr>
+                            <td>{{item.commission}}</td>
+                            <td>{{item.premium}}</td>
+                        </tr>
+                    </template>
+                    <tr>
+                        <td rowspan="2" class="theme-color">团队数据</td>
+                        <td>保费数据</td>
+                        <td>当月结佣</td>
+                    </tr>
+                    <template v-for="(item,key) in nocarPolicyInfos.TeamNocarPolicyInfos">
+                        <tr>
+                            <td>{{item.commission}}</td>
+                            <td>{{item.premium}}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+        <div class="data-card">
+            <div class="data-card-header">
+                <div class="filter-month">
+                    <team-date-picker v-model="date.carPolicyDate" @onchange="getCarPolicyInfos"></team-date-picker>
+                </div>
+                <div class="data-card-title">
+                    车险业务
+                </div>
+                <div class="data-card-unit">
+                    单位：万元
+                </div>
+            </div>
+            <table class="data-table">
+                <tbody>
+                    <tr>
+                        <td rowspan="2" class="theme-color">个人数据</td>
+                        <td>保费数据</td>
+                        <td>当月结佣</td>
+                    </tr>
+                    <template v-for="(item,key) in carPolicyInfos.PersonCarPolicyInfos">
+                        <tr>
+                            <td>{{item.commission}}</td>
+                            <td>{{item.premium}}</td>
+                        </tr>
+                    </template>
+                    <tr>
+                        <td rowspan="2" class="theme-color">团队数据</td>
+                        <td>保费数据</td>
+                        <td>当月结佣</td>
+                    </tr>
+                    <template v-for="(item,key) in carPolicyInfos.TeamCarPolicyInfos">
+                        <tr>
+                            <td>{{item.commission}}</td>
+                            <td>{{item.premium}}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+        <div class="data-card">
+            <div class="data-card-header">
+                <div class="filter-month">
+                    <team-date-picker v-model="date.internetPolicyDate" @onchange="getInternetPolicyInfos">
+                    </team-date-picker>
+                </div>
+                <div class="data-card-title">
+                    互联网业务
+                </div>
+                <div class="data-card-unit">
+                    单位：万元
+                </div>
+            </div>
+            <table class="data-table">
+                <tbody>
+                    <tr>
+                        <td rowspan="2" class="theme-color">个人数据</td>
+                        <td>保费数据</td>
+                        <td>当月结佣</td>
+                    </tr>
+                    <template v-for="(item,key) in internetPolicyInfos.PersonInternetPolicyInfos">
+                        <tr>
+                            <td>{{item.commission}}</td>
+                            <td>{{item.premium}}</td>
+                        </tr>
+                    </template>
+                    <tr>
+                        <td rowspan="2" class="theme-color">团队数据</td>
+                        <td>保费数据</td>
+                        <td>当月结佣</td>
+                    </tr>
+                    <template v-for="(item,key) in internetPolicyInfos.TeamInternetPolicyInfos">
+                        <tr>
+                            <td>{{item.commission}}</td>
+                            <td>{{item.premium}}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="content-box space-margin">
+            <div class="content-header">
+                <div class="title">直辖增员</div>
+                <a class="show-more show-more_link" href="./personAll.html">更多</a>
+            </div>
+            <ul class="person-group">
+                <template v-for="(item,key) in agentAccountList">
+                    <li>
+                        <img :src="item.filePort">
+                        <h5>{{item.cnName}}</h5>
+                    </li>
+                </template>
+            </ul>
+        </div>
+        <div class="content-box space-margin">
+            <div class="content-header">
+                <div class="title">一代育成主管</div>
+                <a class="show-more show-more_link" href="./teamAll.html">更多</a>
+            </div>
+            <ul class="person-group">
+                <template v-for="(item,key) in NurturingDirectors">
+                    <li>
+                        <img :src="item.portrait">
+                        <h5>{{item.name}}</h5>
+                    </li>
+                </template>
+            </ul>
+        </div>
+        <div class="content-box space-margin">
+            <div class="content-header">
+                <div class="title">个人月度保费趋势图</div>
+                <div class="show-more">
+                    <div class="filter-month">
+                        <input type="text" v-model="echartFilter.item.text" @click="echartFilter.show = true" readonly>
+                    </div>
+                </div>
+            </div>
+            <div id="container" style="height: 250px;"></div>
+        </div>
+
+        <vant-picker v-model="echartFilter.show" :columns="echartFilter.list" :column.sync="echartFilter.item">
+        </vant-picker>
+
+    </div>
+    <script src="../../js/common_utils.js"></script>
+    <script src="../../js/vueComponents/vantDatePicker.js"></script>
+    <script src="../../js/vueComponents/teamDatePicker.component.js"></script>
+    <script src="../../js/vueComponents/vantPicker.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    loading: false,
+                    echartFilter: {
+                        show: false,
+                        list: [
+                            { text: '最近1年', value: '0' },
+                            { text: '最近6个月', value: '1' },
+                            { text: '最近3个月', value: '2' },
+                        ],
+                        item: { text: '最近6个月', value: '1' }
+                    },
+                    date: {
+                        achievementDate: new Date(),
+                        nocarPolicyDate: new Date(),
+                        carPolicyDate: new Date(),
+                        internetPolicyDate: new Date(),
+                        echartDate: new Date()
+                    },
+                    achievementInfos: {
+                        PersonAchievementInfos: [],
+                        TeamAchievementInfos: [],
+                    },
+                    nocarPolicyInfos: {
+                        PersonNocarPolicyInfos: [],
+                        TeamNocarPolicyInfos: [],
+                    },
+                    carPolicyInfos: {
+                        PersonCarPolicyInfos: [],
+                        TeamCarPolicyInfos: [],
+                    },
+                    internetPolicyInfos: {
+                        PersonInternetPolicyInfos: [],
+                        TeamInternetPolicyInfos: [],
+                    },
+                    NurturingDirectors: [], // 主管
+                    agentAccountList: [], // 直辖增员
+                }
+            },
+            created() {
+                this.getNurturingDirectors()
+                this.getAllTeamEmployeeInfo()
+                this.getAchievementInfos()
+                this.getPremiumTrendChart()
+            },
+            methods: {
+                initechart: function (data) {
+                    this.$nextTick(function () {
+                        var dom = document.getElementById("container");
+                        var myChart = echarts.init(dom);
+                        var seriesData = [];
+                        var month = [];
+                        var app = {};
+                        data.map(function (i) {
+                            seriesData.push(i.underwritingData)
+                            month.push(i.time)
+                        })
+                        console.log(data, seriesData, month, 'initechart')
+                        option = {
+                            xAxis: {
+                                type: 'category',
+                                data: month
+                            },
+                            yAxis: {
+                                type: 'value'
+                            },
+                            series: [{
+                                data: seriesData,
+                                type: 'line'
+                            }]
+                        };
+
+                        if (option && typeof option === 'object') {
+                            myChart.setOption(option);
+                        }
+                    })
+                },
+                // 主管
+                getNurturingDirectors: function () {
+                    var that = this;
+                    var res = { "code": "0", "data": { "NurturingDirectors": [{ "employeeNumber": "ceshi1", "mapCondition": {}, "name": "测试1", "portrait": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }, { "employeeNumber": "ceshi2", "mapCondition": {}, "name": "测试2", "portrait": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }, { "employeeNumber": "ceshi3", "mapCondition": {}, "name": "测试3", "portrait": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }, { "employeeNumber": "ceshi4", "mapCondition": {}, "name": "测试4", "portrait": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }, { "employeeNumber": "ceshi5", "mapCondition": {}, "name": "测试5", "portrait": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }] }, "message": "成功", "msg": "成功" };
+                    // console.log(res)
+                    if (res.code === '0') {
+                        that.NurturingDirectors = res.data.NurturingDirectors.slice(0, 4)
+                    }
+                    return;
+                    ajax.getNurturingDirectors({ erpuuid: '111' }).then(function (res) {
+                        if (res.data.code === '0') {
+                            that.NurturingDirectors = res.data.data.NurturingDirectors.slice(0, 4)
+                        }
+                    })
+                },
+                // 直辖增员
+                getAllTeamEmployeeInfo: function () {
+                    var that = this;
+                    var res = { "code": "0", "data": { "agentAccountList": [{ "agencyNo": "1001", "auditState": "1", "auditStateStr": "审核通过", "birthday": "", "businessEmployeeNumber": "", "certificateTypeStr": "", "cnName": "李四", "createOper": "", "createTime": "2018-11-26 13:53:41", "delFlag": "0", "filePort": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "genderStr": "", "insCompanyNumber": "", "inviteCode": "DXJ32N", "isAuthentication": "0", "isAuthenticationStr": "未认证", "isDefault": "0", "isDefaultStr": "否", "lastLoginTime": "2019-05-21 11:08:54", "lastSecondLoginTime": "", "leaveCount": 0, "leaveTime": "", "loginErrorCount": 0, "loginName": "", "mapCondition": {}, "mobile": "18711260002", "password": "bda31e399959162702892088fa47c3b9", "registerSource": "", "remindDate": "", "roleType": "02", "sheetRow": 0, "showEmployeeNumber": "", "showRealName": "李四", "sortFieldName": "createTime", "sortType": "desc", "state": "0", "stateStr": "在职", "storeNo": "1001", "totalIntegral": 0, "updateOpeTime": "2019-05-21 11:08:54", "updateOper": "0000000065123b530165126d0b4d0086", "userType": "01", "uuid": "00000000674d7d4a01674e949ab30048", "weixinThirdUuid": "" }, { "agencyNo": "1001", "auditState": "1", "auditStateStr": "审核通过", "birthday": "", "businessEmployeeNumber": "", "certificateTypeStr": "", "cnName": "张三", "createOper": "", "createTime": "2018-11-26 13:52:02", "delFlag": "0", "filePort": "https://apptest.hb-online.cn/group1/M00/00/01/rBGxTGC4Ms2AQQtnAACW4HY06JU679.jpg", "genderStr": "", "insCompanyNumber": "", "inviteCode": "5Q70X3", "isAuthentication": "0", "isAuthenticationStr": "未认证", "isDefault": "0", "isDefaultStr": "否", "lastLoginTime": "2019-05-21 11:08:53", "lastSecondLoginTime": "", "leaveCount": 0, "leaveTime": "", "loginErrorCount": 0, "loginName": "", "mapCondition": {}, "mobile": "18711260001", "password": "06ed9de7e0d1e59aa642d32cb0188a98", "registerSource": "", "remindDate": "", "roleType": "02", "sheetRow": 0, "showEmployeeNumber": "", "showRealName": "张三", "sortFieldName": "createTime", "sortType": "desc", "state": "0", "stateStr": "在职", "storeNo": "1001", "totalIntegral": 0, "updateOpeTime": "2019-05-21 11:08:53", "updateOper": "0000000065123b530165126d0b4d0086", "userType": "01", "uuid": "00000000674d7d4a01674e931a220042", "weixinThirdUuid": "" }] }, "message": "成功", "msg": "成功" }
+                    console.log(res)
+                    if (res.code === '0') {
+                        that.agentAccountList = res.data.agentAccountList
+                    }
+                    return;
+                    ajax.getAllTeamEmployeeInfo({ introducerUuid: '0000000065e862890165ed252cb9003c' }).then(function (res) {
+                        if (res.data.code === '0') {
+                            that.agentAccountList = res.data.data.agentAccountList.slice(0, 4)
+                        }
+                    })
+                },
+                // 团队业绩
+                getAchievementInfos: function () {
+                    var that = this;
+                    var res = { "code": "0", "data": { "PersonAchievementInfos": [{ "achievementType": "规模保费", "advanceCollected": 30.28, "belongType": "", "reviewedData": 25, "underwritingData": 28.28 }, { "achievementType": "价值保费", "advanceCollected": 30.28, "belongType": "", "reviewedData": 25, "underwritingData": 28.28 }, { "achievementType": "件数", "advanceCollected": 30.28, "belongType": "", "reviewedData": 25, "underwritingData": 28.28 }, { "achievementType": "FYC", "advanceCollected": 30.28, "belongType": "", "reviewedData": 25, "underwritingData": 28.28 }], "TeamAchievementInfos": [{ "achievementType": "规模保费", "advanceCollected": 30.28, "belongType": "", "reviewedData": 25, "underwritingData": 28.28 }, { "achievementType": "价值保费", "advanceCollected": 30.28, "belongType": "", "reviewedData": 25, "underwritingData": 28.28 }, { "achievementType": "件数", "advanceCollected": 30.28, "belongType": "", "reviewedData": 25, "underwritingData": 28.28 }, { "achievementType": "FYC", "advanceCollected": 30.28, "belongType": "", "reviewedData": 25, "underwritingData": 28.28 }] }, "message": "成功", "msg": "成功" }
+                    if (res.code == '0') {
+                        that.achievementInfos = res.data;
+                    }
+                    return;
+                    var param = {
+                        erpuuid: 'erpuuid',
+                        dataTime: formatDate(this.date.achievementDate, 'yyyy-MM')
+                    }
+                    ajax.getAchievementInfos(param).then(function (res) {
+                        if (res.data.code == '0') {
+                            that.achievementInfos = res.data.data;
+                        }
+                    })
+                },
+                // 非车险业务
+                getNocarPolicyInfos: function () {
+                    var that = this;
+                    var res = { "code": "0", "data": { "PersonNocarPolicyInfos": [{ "belongType": "", "commission": 28.28, "mapCondition": {}, "policyType": "非车险", "premium": 30.28, "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }], "TeamNocarPolicyInfos": [{ "belongType": "", "commission": 28.28, "mapCondition": {}, "policyType": "非车险", "premium": 30.28, "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }] }, "message": "成功", "msg": "成功" };
+
+                    if (res.code === '0') {
+                        that.nocarPolicyInfos = res.data
+                    }
+                    return;
+                    var param = {
+                        erpuuid: 'erpuuid',
+                        dataTime: formatDate(this.date.nocarPolicyDate, 'yyyy-MM')
+                    }
+                    ajax.getNocarPolicyInfos(param).then(function (res) {
+                        if (res.data.code === '0') {
+                            that.nocarPolicyInfos = res.data.data
+                        }
+                    })
+                },
+                // 车险业务
+                getCarPolicyInfos: function () {
+                    var that = this;
+                    var res = { "code": "0", "data": { "PersonCarPolicyInfos": [{ "belongType": "", "commission": 28.28, "mapCondition": {}, "policyType": "车险", "premium": 30.28, "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }], "TeamCarPolicyInfos": [{ "belongType": "", "commission": 28.28, "mapCondition": {}, "policyType": "车险", "premium": 30.28, "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }] }, "message": "成功", "msg": "成功" };
+
+                    if (res.code === '0') {
+                        that.carPolicyInfos = res.data
+                    }
+                    return;
+                    var param = {
+                        erpuuid: 'erpuuid',
+                        dataTime: formatDate(this.date.carPolicyDate, 'yyyy-MM')
+                    }
+                    ajax.getCarPolicyInfos(param).then(function (res) {
+                        if (res.data.code === '0') {
+                            that.carPolicyInfos = res.data.data
+                        }
+                    })
+                },
+                // 互联网业务
+                getInternetPolicyInfos: function () {
+                    var that = this;
+                    var res = { "code": "0", "data": { "PersonInternetPolicyInfos": [{ "belongType": "", "commission": 28.28, "mapCondition": {}, "policyType": "互联网", "premium": 30.28, "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }], "TeamInternetPolicyInfos": [{ "belongType": "", "commission": 28.28, "mapCondition": {}, "policyType": "互联网", "premium": 30.28, "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }] }, "message": "成功", "msg": "成功" };
+                    if (res.code === '0') {
+                        that.internetPolicyInfos = res.data
+                    }
+                    return;
+                    var param = {
+                        erpuuid: 'erpuuid',
+                        dataTime: formatDate(this.date.internetPolicyDate, 'yyyy-MM')
+                    }
+                    ajax.getInternetPolicyInfos(param).then(function (res) {
+                        if (res.data.code === '0') {
+                            that.internetPolicyInfos = res.data.data
+                        }
+                    })
+                },
+                getPremiumTrendChart: function () {
+                    var that = this;
+                    var res = { "code": "0", "data": { "PremiumList": [{ "achievementType": "", "belongType": "", "time": "2021-06", "underwritingData": 20.11 }, { "achievementType": "", "belongType": "", "time": "2021-05", "underwritingData": 21.11 }, { "achievementType": "", "belongType": "", "time": "2021-04", "underwritingData": 22.11 }, { "achievementType": "", "belongType": "", "time": "2021-03", "underwritingData": 23.11 }, { "achievementType": "", "belongType": "", "time": "2021-02", "underwritingData": 24.11 }, { "achievementType": "", "belongType": "", "time": "2021-01", "underwritingData": 25.11 }] }, "message": "成功", "msg": "成功" };
+                    if (res.code === '0') {
+                        that.initechart(res.data.PremiumList)
+                    } else {
+                        that.initechart([])
+                    }
+                    return;
+                    var param = {
+                        erpUuid: '123132',
+                        count: '6',
+                        belongType: '01' // 01个人 02团队
+                    }
+                    ajax.getPremiumTrendChart(param).then(function (res) {
+                        if (res.code === '0') {
+                            that.initechart(res.data.PremiumList)
+                        } else {
+                            that.initechart([])
+                        }
+                    }).catch(function () {
+                        that.initechart([])
+                    })
+                }
+                // {"code":"0","data":{"PremiumList":[10.11,20.11,30.11,15.11,25.11,45.11]},"message":"成功","msg":"成功"}
+
+            }
+        })
+    </script>
+</body>
+
+</html>

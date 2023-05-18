@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>在线入司</title>
+    <meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name="viewport"
+        id="viewport" />
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="keywords" content="">
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/common.js?v=1.01"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <style>
+/*         
+body{width:100%;background-color:#00154b}
+.content-bg{width: 100%;position: absolute;top: 0;height: 694px;background:url(../../img/increase/increase_guide_bg.png) no-repeat top/contain;}
+.join-company{position:absolute;top:60px;width:100%;height:50px;background:url(../../img/increase/increase_title.png) no-repeat top/contain}
+.privilege{position:absolute;top:134px;right:30px;left:30px;display:flex;padding:8px 0;background-image:linear-gradient(88deg,rgb(255 255 255/0),rgb(255 255 255/37%),rgb(255 255 255/4%));transform:scale(.8);align-items:center}
+.privilege-item{color:#fff;text-align:center;font-size:12px;flex:1}
+.privilege-item>img{margin-right:5px;width:16px;vertical-align:middle}
+.first-section{margin-top:525px!important;padding-bottom:30px!important}
+.about-us,.join-btn-area,.section-card{margin:0 30px 30px}
+.section-card{position:relative;padding:42px 20px 16px;border-radius:10px;background-color:#082364;box-shadow:0 0 20px 4px rgb(13 55 141/96%)}
+.section-card h1{position:absolute;top:-10px;left:50%;height:36px;transform:translateX(-50%)}
+.section-card h1>img{height:100%;object-position:center}
+.company-profile{display:-webkit-box;overflow:hidden;color:hsla(0,0%,100%,.85);text-indent:2em;text-overflow:ellipsis;font-size:12px;line-height:1.6;-webkit-box-orient:vertical;-webkit-line-clamp:8}
+.show-more{position:absolute;bottom:6px;left:0;padding:10px 0;width:100%;height:12px;background:url(../../img/increase/increase_icon_5.png) no-repeat 50%;background-size:12px 12px;transition:all .4s;transform:rotate(0)}
+.company-profile-showmore .company-profile{-webkit-line-clamp:initial!important}
+.company-profile-showmore .show-more{transform:rotate(180deg)!important}
+.advantage-content{text-align:center}
+.advantage-title{position:relative;display:inline-block;margin:15px 0 10px;padding:0 10px;border:solid #fff;border-width:0 4px;color:#d9bfa1;font-weight:600;font-size:13px;line-height:1.1}
+.advantage-title:first-child{margin-top:0}
+.advantage-des{color:hsla(0,0%,100%,.85);text-align:left;font-size:12px;line-height:1.6}
+.about-us-title,.exclusive-function-title{padding:15px 0;color:#d9bfa1;text-align:center;letter-spacing:1px;font-size:18px}
+.about-us-video{width:100%;height:calc(50vw - 30px);background-color: #000}
+.join-step-item{position:relative;padding:10px 0;border-radius:30px;background-color:#001547;color:#fff;text-align:center;font-size:14px}
+.join-step-item+.join-step-item{margin-top:24px}
+.join-step-item:not(:last-child):after{position:absolute;bottom:-20px;left:50%;width:40px;height:15px;background:url(../../img/increase/increase_icon_4.png) no-repeat 50%/contain;content:"";transform:translateX(-50%)}
+.join-btn:active:after{opacity:1!important}
+.join-btn{position:relative;padding:0;width:100%;height:56px;outline:0;background:url(../../img/increase/increase_btn.png) no-repeat bottom/106%;background-position:center 20%}
+.join-btn:after{position:absolute;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.3);border-radius:10px;content:"";opacity:0;transition:opacity .2s}
+.exclusive-function{margin:0 0 30px}
+.exclusive-function-group{display:grid;justify-content: center;grid-template-columns:repeat(4,75px);gap:20px 5px}
+.exclusive-function-item{text-align:center;line-height:1.5}
+.exclusive-function-item .function-icon{display:flex;margin:auto auto 10px;width:50px;height:50px;border-radius:50%;background-color:#072362;align-items:center;justify-content:center}
+.exclusive-function-item .function-icon>img{width:50%;height:50%;object-position:center;object-fit:contain}
+.exclusive-function-item .function-title{color:#fff;font-size:12px}
+.exclusive-function-item .function-des{color:#6ca3ff;font-size:10px} */
+
+.content-bg{width: 100%;position: absolute;top: 0;height: 15rem;background:url(../../img/increase/increase_guide_bg.png) no-repeat top/contain;}
+body{width:100%;background-color:#00154b}
+.join-company{position:absolute;top:1.2rem;width:100%;height:1.06rem;background:url(../../img/increase/increase_title.png) no-repeat top/contain}
+.privilege{position:absolute;top:2.68rem;right:.6rem;left:.6rem;display:flex;padding:.16rem 0;background-image:linear-gradient(88deg,rgb(255 255 255/0),rgb(255 255 255/37%),rgb(255 255 255/4%));transform:scale(.8);align-items:center}
+.privilege-item{color:#fff;text-align:center;font-size:.24rem;flex:1}
+.privilege-item>img{margin-right:.1rem;width:.32rem;vertical-align:middle}
+.first-section{margin-top:10.5rem!important;padding-bottom:.6rem!important}
+.about-us,.join-btn-area,.section-card{margin:0 .6rem .6rem}
+.section-card{position:relative;padding:.84rem .4rem .32rem;border-radius:.2rem;background-color:#082364;box-shadow:0 0 .4rem .08rem rgb(13 55 141/96%)}
+.section-card h1{position:absolute;top:-.2rem;left:50%;height:.72rem;transform:translateX(-50%)}
+.section-card h1>img{height:100%;object-position:center}
+.company-profile{display:-webkit-box;overflow:hidden;color:hsla(0,0%,100%,.85);text-indent:2em;text-overflow:ellipsis;font-size:.24rem;line-height:1.6;-webkit-box-orient:vertical;-webkit-line-clamp:8}
+.show-more{position:absolute;bottom:.12rem;left:0;padding:.2rem 0;width:100%;height:.24rem;background:url(../../img/increase/increase_icon_5.png) no-repeat 50%;background-size:.24rem .24rem;transition:all .4s;transform:rotate(0)}
+.company-profile-showmore .company-profile{-webkit-line-clamp:initial!important}
+.company-profile-showmore .show-more{transform:rotate(180deg)!important}
+.advantage-content{text-align:center}
+.advantage-title{position:relative;display:inline-block;margin:.3rem 0 .2rem;padding:0 .2rem;border:solid #fff;border-width:0 .08rem;color:#d9bfa1;font-weight:600;font-size:.26rem;line-height:1.1}
+.advantage-title:first-child{margin-top:0}
+.advantage-des{color:hsla(0,0%,100%,.85);text-align:left;font-size:.24rem;line-height:1.6}
+.about-us-title,.exclusive-function-title{padding:.3rem 0;color:#d9bfa1;text-align:center;letter-spacing:.02rem;font-size:.36rem}
+.about-us-video{width:100%;height:calc(50vw - .6rem);background-color: #000}
+.join-step-item{position:relative;padding:.2rem 0;border-radius:.6rem;background-color:#001547;color:#fff;text-align:center;font-size:.28rem}
+.join-step-item+.join-step-item{margin-top:.48rem}
+.join-step-item:not(:last-child):after{position:absolute;bottom:-.4rem;left:50%;width:.8rem;height:.3rem;background:url(../../img/increase/increase_icon_4.png) no-repeat 50%/contain;content:"";transform:translateX(-50%)}
+.join-btn:active:after{opacity:1!important}
+.join-btn{position:relative;padding:0;width:100%;height:1.12rem;outline:0;background:url(../../img/increase/increase_btn.png) no-repeat bottom/106%;background-position:center 20%}
+.join-btn:after{position:absolute;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.3);border-radius:.2rem;content:"";opacity:0;transition:opacity .2s}
+.exclusive-function{margin: 0 0 .6rem}
+.exclusive-function-group{display:grid;justify-content: center;grid-template-columns:repeat(4,1.7rem);gap:.4rem .1rem}
+.exclusive-function-item{text-align:center;line-height:1.5}
+.exclusive-function-item .function-icon{display:flex;margin:auto auto .2rem;width:1rem;height:1rem;border-radius:50%;background-color:#072362;align-items:center;justify-content:center}
+.exclusive-function-item .function-icon>img{width:50%;height:50%;object-position:center;object-fit:contain}
+.exclusive-function-item .function-title{color:#fff;font-size:.24rem}
+.exclusive-function-item .function-des{color:#6ca3ff;font-size:.2rem}
+    </style>
+</head>
+
+<body>
+    <div class="content-bg"></div>
+    <div class="join-company"></div>
+    <ul class="privilege">
+        <li class="privilege-item">
+            <img src="../../img/increase/increase_icon_1.png">
+            专属权益
+        </li>
+        <li class="privilege-item">
+            <img src="../../img/increase/increase_icon_2.png">
+            专属服务
+        </li>
+        <li class="privilege-item">
+            <img src="../../img/increase/increase_icon_3.png">
+            专属客服
+        </li>
+    </ul>
+    <section class="section-card first-section">
+        <h1><img src="../../img/increase/increase_title_1.png" /></h1>
+        <div class="company-profile">
+            <p>
+                恒邦保险销售服务有限公司（以下简称恒邦保险销售）是经国家保监会（原）审核批准的全国性专业保险中介服务机构，于2012年完成股改真正进入市场，总部设在中国郑州，目前沿“米”字型高铁铺设省级机构11家，下辖分支机构110多家，销售队伍超万人。
+            </p>
+            <p>“恒邦”出自《尚书-五子之歌》：民为邦本，本固邦恒。意为：百姓是国家之根本，只有百姓安居乐业才有国家的太平、强盛，这也正是保险的意义所在。</p>
+            <p>公司拥有价值观相同的董事会成员和优秀的经营管理团队，凝聚了一批专业化、高素养、高效率的精英销售服务团队，公司经营能力持续提升。</p>
+            <p>
+                恒邦保险销售始终遵循“以制度规范为核心，以文化建设为保障，以机制创新为动力，以体系推动为手段”的管理策略，以“服务平台+个人创业”的商业模型，以“文化引领——法务护航——财税规划——科技赋能”的服务链，与多家供应商建立战略合作关系，拥有丰富的产品线能够满足客户多样化的保障需求。
+            </p>
+            <p>恒邦保险销售坚持科技赋能战略，2019年推出恒邦在线APP，2020年恒邦在线V3.0上线运行并全国推广使用，解决代理人增员获客问题，构建恒邦场景生态圈。</p>
+            <p>
+                恒无止境，邦无终点。恒邦保险销售始终坚持科学发展观，在持续推进企业健康发展的同时，肩负企业社会责任，积极参与社会公益与精准扶贫活动，不断提升企业价值创造能力和公司综合实力，脚踏实地，不忘初心，用专业的态度，争创优秀保险中介品牌，为保险让生活更美好的目标努力奋斗！
+            </p>
+        </div>
+        <div class="show-more"></div>
+    </section>
+
+    <section class="about-us">
+        <div class="about-us-title">关于恒邦</div>
+        <video class="about-us-video" poster="../../img/increase/increase_video-poster.png" controls>
+            <source src="https://www.runoob.com/try/demo_source/movie.mp4" type="video/mp4">
+            <source src="https://www.runoob.com/try/demo_source/movie.ogg" type="video/ogg">
+            您的浏览器不支持Video标签。
+        </video>
+    </section>
+
+    <section class="section-card">
+        <h1><img src="../../img/increase/increase_title_2.png" /></h1>
+
+        <div class="advantage-content">
+            <div class="advantage-title">制度优势</div>
+            <div class="advantage-des">
+                恒邦保险销售创立了优秀的独立合伙人制度， 坚持”公司平台+个人创业”的商业模型， 用制度固化团队利益，用诚信铸就恒邦品牌。
+            </div>
+            <div class="advantage-title">平台优势</div>
+            <div class="advantage-des">
+                平台优势以客户需求为导向的产品服务平台
+                以运营时效为标准的后援支撑平台
+                以依法合规为前提的财务处理平台
+            </div>
+            <div class="advantage-title">产品优势</div>
+            <div class="advantage-des">
+                恒邦保险销售目前已经与几十家保险公司签 署战略合作，有较为丰富的产品库，可覆盖中高端保险消费市场，用多元化的产品优势满足客户不通的保险保障需求。
+            </div>
+            <div class="advantage-title">服务优势</div>
+            <div class="advantage-des">
+                诚信待客是服务之本，客户满意是企业之源。 为客户提供多元化、个性化、专业化的保险产品和服务，是我们不懈追求的目标。
+            </div>
+            <div class="advantage-title">人才优势</div>
+            <div class="advantage-des">
+                恒邦保险销售经过九年来的发展，持续优化 平台建设，吸引了众多具有保险情怀、道德素质良好的业内精英加入恒邦大家庭，并逐步完善人才培养、晋升的梯队建设。
+            </div>
+        </div>
+    </section>
+
+    <section class="exclusive-function">
+        <div class="exclusive-function-title">加入恒邦即可享专属权益</div>
+        <ul class="exclusive-function-group">
+            <li class="exclusive-function-item">
+                <div class="function-icon">
+                    <img src="../../img/increase/increase_icon_6.png" />
+                </div>
+                <div class="function-title">海量产品</div>
+                <div class="function-des">产品种类丰富</div>
+            </li>
+            <li class="exclusive-function-item">
+                <div class="function-icon">
+                    <img src="../../img/increase/increase_icon_7.png" />
+                </div>
+                <div class="function-title">线上入司</div>
+                <div class="function-des">打破局限</div>
+            </li>
+            <li class="exclusive-function-item">
+                <div class="function-icon">
+                    <img src="../../img/increase/increase_icon_8.png" />
+                </div>
+                <div class="function-title">专属客服</div>
+                <div class="function-des">1v1贴心服务</div>
+            </li>
+            <li class="exclusive-function-item">
+                <div class="function-icon">
+                    <img src="../../img/increase/increase_icon_9.png" />
+                </div>
+                <div class="function-title">专属计划书</div>
+                <div class="function-des">指定专属保障</div>
+            </li>
+            <li class="exclusive-function-item">
+                <div class="function-icon">
+                    <img src="../../img/increase/increase_icon_7.png" />
+                </div>
+                <div class="function-title">精美海报</div>
+                <div class="function-des">轻松获客</div>
+            </li>
+            <li class="exclusive-function-item">
+                <div class="function-icon">
+                    <img src="../../img/increase/increase_icon_10.png" />
+                </div>
+                <div class="function-title">专属保障诊断</div>
+                <div class="function-des">私人定制方案</div>
+            </li>
+            <li class="exclusive-function-item">
+                <div class="function-icon">
+                    <img src="../../img/increase/increase_icon_11.png" />
+                </div>
+                <div class="function-title">专项课程</div>
+                <div class="function-des">完整培训流程</div>
+            </li>
+            <li class="exclusive-function-item">
+                <div class="function-icon">
+                    <img src="../../img/increase/increase_icon_12.png" />
+                </div>
+                <div class="function-title">智能溯源</div>
+                <div class="function-des">人脉可视化</div>
+            </li>
+        </ul>
+    </section>
+
+    <section class="section-card">
+        <h1><img src="../../img/increase/increase_title_3.png" /></h1>
+        <ul class="join-step">
+            <li class="join-step-item">上传身份证、填写信息（20秒）</li>
+            <li class="join-step-item">线上岗前培训（20秒）</li>
+            <li class="join-step-item">审核资料（平均1个工作日）</li>
+            <li class="join-step-item">立即出单</li>
+        </ul>
+    </section>
+    <div class="join-btn-area"><button class="join-btn"></button></div>
+
+    <script>
+        $('.show-more').click(function () {
+            var showMoreClass = 'company-profile-showmore';
+            var isShowMore = $(this).parent().hasClass(showMoreClass);
+            if (isShowMore) {
+                $(this).parent().removeClass(showMoreClass);
+            } else {
+                $(this).parent().addClass(showMoreClass);
+            }
+        })
+    </script>
+</body>
+
+</html>

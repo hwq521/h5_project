@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>报案单管理</title>
+    <meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name="viewport" id="viewport" />
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="keywords" content="">
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <link rel="stylesheet" type="text/css" href="../../css/new-common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/customer-form.css" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+    <style>
+        .form-item .value {
+            text-align: right;
+        }
+        
+        .form-item textarea.value {
+            text-align: left !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <step :step="1"></step>
+        <ul class="form-group">
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">报案时间</div>
+                <form-date-picker v-model="formData.reportTime" datetype="date" title="请选择报案时间" placeholder="请选择报案时间"></form-date-picker>
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">车牌号码</div>
+                <input type="text" class="value input-bg" placeholder="请输入车牌号码">
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">统筹单号</div>
+                <input type="text" class="value" placeholder="请输入统筹单号">
+            </li>
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">出险时间</div>
+                <form-date-picker v-model="formData.chuxianTime" datetype="date" title="请选择出险时间" placeholder="请选择出险时间"></form-date-picker>
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">被统筹人</div>
+                <input type="text" class="value" placeholder="请输入被统筹人">
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">被统筹人电话</div>
+                <input type="number" class="value" placeholder="请输入被统筹人电话">
+            </li>
+        </ul>
+        <ul class="form-group">
+            <li class="form-item form-item_required">
+                <div class="label">报案联系人</div>
+                <input type="text" class="value" placeholder="请输入报案联系人">
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">报案人电话</div>
+                <input type="number" class="value" placeholder="请输入报案人电话">
+            </li>
+        </ul>
+        <ul class="form-group">
+            <li class="form-item form-item_required">
+                <div class="label">驾驶员</div>
+                <input type="text" class="value" placeholder="请输入驾驶员">
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">实际驾驶员</div>
+                <input type="text" class="value input-bg" placeholder="请输入实际驾驶员">
+            </li>
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">驾驶员性别</div>
+                <form-picker v-model="formData.driverSexColumn" :columns="formData.driverSexColumn" title="请选择驾驶员性别" placeholder="请选择驾驶员性别"></form-picker>
+            </li>
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">是否指定驾驶员</div>
+                <form-picker v-model="formData.designatedPilotColumn" :columns="formData.designatedPilotColumns" title="请选择是否指定驾驶员" placeholder="请选择是否指定驾驶员"></form-picker>
+            </li>
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">准驾车证</div>
+                <form-picker v-model="formData.drivingLicensesColumn" :columns="formData.drivingLicensesColumns" title="请选择准驾车证" placeholder="请选择准驾车证"></form-picker>
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">驾驶证号</div>
+                <input type="text" class="value input-bg" placeholder="请输入驾驶证号">
+            </li>
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">事故原因</div>
+                <form-picker v-model="formData.accidentCauseColumn" :columns="formData.accidentCauseColumns" title="请选择事故原因" placeholder="请选择事故原因"></form-picker>
+            </li>
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">事故责任</div>
+                <form-picker v-model="formData.accidentLiabilityColumn" :columns="formData.accidentLiabilityColumns" title="请选择事故责任" placeholder="请选择事故责任"></form-picker>
+            </li>
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">事故类型</div>
+                <form-picker v-model="formData.accidentTypeColumn" :columns="formData.accidentTypeColumns" title="请选择事故类型" placeholder="请选择事故类型"></form-picker>
+            </li>
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">案件流程类型</div>
+                <form-picker v-model="formData.isGreatCaseColumn" :columns="formData.isGreatCaseColumns" title="请选择案件状态" placeholder="请选择案件状态"></form-picker>
+            </li>
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">重大案件</div>
+                <form-picker v-model="formData.isGreatCaseColumn" :columns="formData.isGreatCaseColumns" title="请选择案件状态" placeholder="请选择案件状态"></form-picker>
+            </li>
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">案件状态</div>
+                <form-picker v-model="formData.caseStateColumn" :columns="formData.caseStateColumns" title="请选择案件状态" placeholder="请选择案件状态"></form-picker>
+            </li>
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">有无人员伤亡</div>
+                <form-picker v-model="formData.casualtiesColumn" :columns="formData.casualtiesColumns" title="请选择有无人员伤亡" placeholder="请选择有无人员伤亡"></form-picker>
+            </li>
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">道路类型</div>
+                <form-picker v-model="formData.roadTypeColumn" :columns="formData.roadTypeColumns" title="请选择道路类型" placeholder="请选择道路类型"></form-picker>
+            </li>
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">事故地点</div>
+                <input type="text" class="value" placeholder="请选择事故地点">
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">事故经过</div>
+                <textarea class="value input-bg" cols="30" rows="4" placeholder="请简要描述事故经过"></textarea>
+            </li>
+        </ul>
+        <ul class="form-group">
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">是否需要施救</div>
+                <form-picker v-model="formData.needHelpColumn" :columns="formData.needHelpColumns" title="是否需要施救" placeholder="是否需要施救"></form-picker>
+            </li>
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">是否第一现场</div>
+                <form-picker v-model="formData.firstHandColumn" :columns="formData.firstHandColumns" title="请选择是否第一现场" placeholder="请选择是否第一现场"></form-picker>
+            </li>
+        </ul>
+        <ul class="form-group">
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">查勘时间</div>
+                <form-date-picker v-model="formData.date" datetype="date" title="请选择查勘时间" placeholder="请选择查勘时间"></form-date-picker>
+            </li>
+            <li class="form-item form-item_required">
+                <div class="label">查勘意见</div>
+                <textarea class="value input-bg" cols="30" rows="4" placeholder="请输入查勘意见"></textarea>
+            </li>
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">查勘员</div>
+                <form-picker v-model="formData.chakanyuanColumn" :columns="formData.chakanyuanColumns" title="请选择查勘员" placeholder="请选择查勘员"></form-picker>
+            </li>
+            <li class="form-item form-item_required form-item_link">
+                <div class="label">查勘机构</div>
+                <form-picker v-model="formData.chakanColumn" :columns="formData.chakanColumns" title="请选择查勘机构" placeholder="请选择查勘机构"></form-picker>
+            </li>
+        </ul>
+        <div class="btn-form-area">
+            <button class="btn btn-l btn-primary">下一步</button>
+        </div>
+    </div>
+    <script src="../../js/vueComponents/step.component.js"></script>
+    <script src="../../js/vueComponents/vantPicker.js"></script>
+    <script src="../../js/vueComponents/vantPicker.component.js"></script>
+    <script src="../../js/vueComponents/vantDatePicker.js"></script>
+    <script src="../../js/vueComponents/vantDatePicker.component.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    formData: {
+                        reportTime: new Date(),
+                        chuxianTime: new Date(),
+                        chakanDate: new Date(),
+                        chakanColumn: {},
+                        chakanColumns: [{
+                            text: '机构1',
+                            value: 1
+                        }, {
+                            text: '机构2',
+                            value: 2
+                        }],
+                        chakanyuanColumn: {},
+                        chakanyuanColumns: [{
+                            text: '查勘员1',
+                            value: 1
+                        }, {
+                            text: '查勘员2',
+                            value: 2
+                        }],
+                        firstHandColumn: {},
+                        firstHandColumns: [{
+                            text: '是',
+                            value: 1
+                        }, {
+                            text: '否',
+                            value: 2
+                        }],
+                        needHelpColumn: {},
+                        needHelpColumns: [{
+                            text: '是',
+                            value: 1
+                        }, {
+                            text: '否',
+                            value: 2
+                        }],
+                        roadTypeColumn: {},
+                        roadTypeColumns: [{
+                            text: '道路类型1',
+                            value: 1
+                        }, {
+                            text: '道路类型2',
+                            value: 2
+                        }, {
+                            text: '道路类型3',
+                            value: 3
+                        }],
+                        casualtiesColumn: {},
+                        casualtiesColumns: [{
+                            text: '是',
+                            value: 1
+                        }, {
+                            text: '否',
+                            value: 2
+                        }],
+                        caseStateColumn: {},
+                        caseStateColumns: [{
+                            text: '案件状态1',
+                            value: 1
+                        }, {
+                            text: '案件状态2',
+                            value: 2
+                        }, {
+                            text: '案件状态3',
+                            value: 3
+                        }],
+                        isGreatCaseColumn: {},
+                        isGreatCaseColumns: [{
+                            text: '是',
+                            value: 1
+                        }, {
+                            text: '否',
+                            value: 2
+                        }],
+                        caseProcessTypeColumn: {},
+                        caseProcessTypeColumns: [{
+                            text: '案件流程类型1',
+                            value: 1
+                        }, {
+                            text: '案件流程类型2',
+                            value: 2
+                        }],
+                        accidentTypeColumn: {},
+                        accidentTypeColumns: [{
+                            text: '事故类型1',
+                            value: 1
+                        }, {
+                            text: '事故类型2',
+                            value: 2
+                        }],
+                        accidentLiabilityColumn: {},
+                        accidentLiabilityColumns: [{
+                            text: '事故责任1',
+                            value: 1
+                        }, {
+                            text: '事故责任2',
+                            value: 2
+                        }],
+                        accidentCauseColumn: {},
+                        accidentCauseColumns: [{
+                            text: '事故原因1',
+                            value: 1
+                        }, {
+                            text: '事故原因2',
+                            value: 2
+                        }],
+                        drivingLicensesColumn: {},
+                        drivingLicensesColumns: [{
+                            text: '准驾车证1',
+                            value: 1
+                        }, {
+                            text: '准驾车证2',
+                            value: 2
+                        }, {
+                            text: '准驾车证3',
+                            value: 3
+                        }, {
+                            text: '准驾车证4',
+                            value: 4
+                        }],
+                        accidentCauseColumn: {},
+                        accidentCauseColumns: [{
+                            text: '事故原因1',
+                            value: 1
+                        }, {
+                            text: '事故原因2',
+                            value: 2
+                        }],
+                        designatedPilotColumn: {},
+                        designatedPilotColumns: [{
+                            text: '是',
+                            value: 1
+                        }, {
+                            text: '否',
+                            value: 2
+                        }],
+                        designatedPilotColumn: {},
+                        designatedPilotColumns: [{
+                            text: '是',
+                            value: 1
+                        }, {
+                            text: '否',
+                            value: 2
+                        }],
+                        driverSexColumn: {},
+                        driverSexColumns: [{
+                            text: '男',
+                            value: 1
+                        }, {
+                            text: '女',
+                            value: 2
+                        }],
+                    },
+                    aaaa: {}
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>报案单管理</title>
+    <meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name="viewport" id="viewport" />
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="keywords" content="">
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <link rel="stylesheet" type="text/css" href="../../css/new-common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/customer-form.css" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+    <style>
+        .upload-confirm {
+            background-color: transparent !important;
+        }
+        
+        .upload-confirm-main {
+            background-color: #fff;
+            border-radius: 0 0 6px 6px;
+            padding: 16px 14px;
+        }
+        
+        .upload-confirm-main .content {
+            font-size: 12px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        
+        .upload-confirm .upload-btn-area {
+            display: flex;
+            align-items: center;
+        }
+        
+        .upload-confirm .btn {
+            flex: 1;
+            font-size: 12px !important;
+        }
+        
+        .upload-confirm-title {
+            width: calc(100vw - 60px);
+            padding: 10px 0;
+            background: url(../../img/bg_qb_info.png) top center/cover no-repeat transparent;
+            font-size: 18px;
+            color: #fff;
+            text-align: center;
+        }
+        
+        .confirm-close {
+            width: 100%;
+            height: 20px;
+            margin-top: 20px;
+            background: url(../../img/choose-close-bgfff.png) center center/contain no-repeat transparent;
+            background-size: contain;
+        }
+        
+        .upload-confirm .hidden-btn {
+            position: absolute;
+            bottom: 64px;
+            width: 200px;
+            height: 43px;
+            background-color: rgba(0, 0, 0, 0.3);
+            margin: auto;
+            left: 0;
+            right: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <step :steptype="1" :step="3"></step>
+        <ul class="form-group">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_1.png" class="form-title-icon">
+                <div class="form-title">申请单号</div>
+            </li>
+        </ul>
+
+        <ul class="form-group">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_1.png" class="form-title-icon">
+                <div class="form-title">发送理赔资料</div>
+            </li>
+            <li class="form-item form-centent-center">
+                <button class="btn btn-m btn-primary">发送短信</button>
+                <button class="btn btn-m btn-primary">发送邮箱</button>
+            </li>
+        </ul>
+
+        <ul class="form-group">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_8.png" class="form-title-icon">
+                <div class="form-title">影像资料</div>
+            </li>
+            <li class="form-item">
+                <form-upload title="索赔申请表" v-model="fileList"></form-upload>
+            </li>
+            <li class="form-item">
+                <form-upload title="完整的门诊病历，诊断证明原件" v-model="fileList"></form-upload>
+            </li>
+            <li class="form-item">
+                <form-upload title="医院签发的医药费/住宿费收据原件" v-model="fileList"></form-upload>
+            </li>
+            <li class="form-item">
+                <form-upload title="收款银行存折/银行卡复印件" v-model="fileList"></form-upload>
+            </li>
+            <li class="form-item">
+                <form-upload title="其他理赔所需资料（如有快递单号请拍照上传）" v-model="fileList"></form-upload>
+            </li>
+            <li class="form-item">
+                <form-upload title="被保人身份证件" v-model="fileList"></form-upload>
+            </li>
+        </ul>
+        <div class="btn-form-area">
+            <button class="btn btn-l btn-default" @click="reportSuccess.show = true">稍后上传影像</button>
+            <button class="btn btn-l btn-primary" @click="confirm.show = true">提交影像</button>
+        </div>
+
+        <!-- 确认页弹窗 -->
+        <van-popup class="upload-confirm" v-model="confirm.show" position="center" :close-on-click-overlay="false">
+            <div class="upload-confirm-contrainer">
+                <div class="upload-confirm-title">请您确认</div>
+                <div class="upload-confirm-main">
+                    <div class="content">
+                        是否稍后上传影像？若稍后上传则系统对您本次上传的影像资料不会进行保存。
+                    </div>
+                    <div class="upload-btn-area">
+                        <button class="btn btn-l btn-default">取消</button>
+                        <button class="btn btn-l btn-warn">确定</button>
+                    </div>
+                </div>
+                <div class="confirm-close" @click="confirm.show = false"></div>
+            </div>
+        </van-popup>
+
+        <!-- 报案成功弹窗 -->
+        <van-popup class="upload-confirm" v-model="reportSuccess.show" position="center" :close-on-click-overlay="false">
+            <div class="upload-confirm-contrainer">
+                <img src="../../img/report_success.png" class="report-success" width="260" />
+                <div class="hidden-btn">
+                    <!-- 按钮部分 -->
+                </div>
+                <div class="confirm-close" @click="reportSuccess.show = false"></div>
+            </div>
+        </van-popup>
+    </div>
+    <script src="../../js/vueComponents/step.component.js"></script>
+    <script src="../../js/vueComponents/form-upload.component.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    confirm: {
+                        show: false,
+                    },
+                    reportSuccess: {
+                        show: true,
+                    },
+                    fileList: [],
+
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,134 @@
+body{
+	color: #333;
+}
+.head-img {
+	width: 0.72rem;
+	height: 0.72rem;
+	margin-right: 0.12rem;
+}
+
+.selected-area {
+	margin: 0.12rem 0 0.24rem;
+}
+
+.selected-area-title {
+	font-size: 0.336rem;
+	padding: 0.192rem 0.288rem;
+	background-color: #fff;
+}
+
+.selected-item {
+	font-size: 0.48rem;
+	padding: 0.192rem 0.144rem;
+	text-align: center;
+	height: 2.4rem;
+	overflow-x: hidden;
+}
+
+.selected-item>li {
+	position: relative;
+	display: inline-block;
+	width: 30%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	background-color: blue;
+	white-space: nowrap;
+	color: #fff;
+	border-radius: 4px;
+	padding: 0.048rem 0.12rem;
+	padding-right: 0.432rem;
+	font-size: 0.28rem;
+	margin-right: 0.144rem;
+}
+
+.selected-item>li:after,
+.selected-item>li:before {
+	content: '';
+	position: absolute;
+	right: 0.048rem;
+	top: 50%;
+	width: 0.336rem;
+	height: 0.048rem;
+	background-color: #fff;
+}
+
+.selected-item>li:after {
+	transform: translateY(-50%) rotate(-45deg);
+}
+
+.selected-item>li:before {
+	transform: translateY(-50%) rotate(45deg);
+}
+
+.van-checkbox-group .van-checkbox {
+	margin-left: 0.24rem;
+}
+
+
+.question-item+.question-item:after {
+	opacity: 1 !important;
+}
+
+.question-group {
+	margin-top: 0.2rem;
+}
+
+.question-item:after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0.24rem;
+	right: 0.24rem;
+	height: 0.01rem;
+	opacity: 0;
+	background-color: #dcdcdc;
+}
+
+.question-item,
+.category-name {
+	position: relative;
+	background-color: #fff;
+	margin: 0 0.288rem;
+	padding: 0.24rem 0.288rem;
+}
+
+.question-item {
+	font-size: 0.28rem;
+	line-height: 1.5;
+}
+
+.category-name {
+	color: #333;
+	font-size: 0.3rem;
+	border-bottom: 1px solid #e2e2e2;
+	font-weight: 600;
+}
+
+.question {
+	margin-bottom: 0.144rem;
+	color: #333;
+}
+
+.van-radio+.van-radio {
+	margin-top: 0.048rem;
+}
+
+.van-radio,
+.van-radio .van-icon {
+	font-size: 0.288rem;
+}
+
+
+.btn-area {
+	padding: 0.24rem 0.288rem 0.3rem;
+}
+
+.btn-area .van-button {
+	width: 100%;
+}
+
+.van-overlay {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的团队</title>
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/common.js?v=1.01"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+    <link rel="stylesheet" href="../../css/team/style.css" />
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        222222222222
+        <!-- <a download-octet-stream="lilnong.top.pdf"
+            href="https://pc-zatest1.zhongan.com/open/common/downloadFileScreen/downloadDoc.json?data=d40171a93d81a261822209c3e2528065f0a5a5e927ea0b66">下载</a>
+             -->
+
+
+        <a download-octet-stream="lilnong.top.pdf"
+            href="https://www.lilnong.top/download-octet-stream/pdf/%E6%89%AB%E6%8F%8F0015.pdf">下载1111111111111</a>
+
+
+        <br>
+        <br>
+        <div onclick="CloseWebPage()">
+            关闭
+        </div>
+    </div>
+    <script>
+        
+			if(/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)){
+				alert('1')
+			}else{
+				alert('0')
+			}
+        // 关闭当前页面
+        function CloseWebPage() {
+            if (navigator.userAgent.indexOf("MSIE") > 0) {
+                if (navigator.userAgent.indexOf("MSIE 6.0") > 0) {
+                    window.opener = null;
+                    window.close();
+                } else {
+                    window.open('', '_top');
+                    window.top.close();
+                }
+            }
+            else if (navigator.userAgent.indexOf("Firefox") > 0) {
+                window.location.href = 'about:blank ';
+            } else {
+                window.opener = null;
+                window.open('', '_self', '');
+                window.close();
+            }
+        }
+        new Vue({
+            data() {
+                return {}
+            },
+            created() {
+                this.thirdAuditInfo()
+            },
+            methods: {
+                getPostCodeList() {
+                    // {"code":"0","data":{"PostRankList":[{"createTime":"2018-11-15 22:41:28","defaultState":"","defaultStateStr":"","delFlag":"0","directorState":"1","directorStateStr":"销售类","mapCondition":{},"note":"","officialState":"0","postLevel":"1","postName":"业务总监","postRankCode":"12312","postrankTemplateUuid":"9f21928cbd44462b97e4eeecc0b15d1f","rate":0,"sheetRow":0,"sortFieldName":"createTime","sortType":"desc","storeNo":"1001","updateOpeTime":"2019-09-24 19:26:33","updateOper":"0000000065123b530165125c69b20006","userType":"02","userTypeStr":"直属经纪人","uuid":"0000000067179b36016717d1dab90000","workType":"1"},{"createTime":"2019-09-24 15:29:10","defaultState":"","defaultStateStr":"","delFlag":"0","directorState":"1","directorStateStr":"销售类","mapCondition":{},"note":"","officialState":"0","postLevel":"2","postName":"业务经理","postRankCode":"RANK0000000041","postrankTemplateUuid":"9f21928cbd44462b97e4eeecc0b15d1f","rate":0,"sheetRow":0,"sortFieldName":"createTime","sortType":"desc","storeNo":"1001","updateOpeTime":"2019-09-24 19:26:26","updateOper":"0000000065123b530165125c69b20006","userType":"02","userTypeStr":"直属经纪人","uuid":"40285b816d622208016d622c8e1a0001","workType":"1"},{"createTime":"2018-11-26 10:37:27","defaultState":"","defaultStateStr":"","delFlag":"0","directorState":"1","directorStateStr":"销售类","mapCondition":{},"note":"","officialState":"0","postLevel":"3","postName":"理财经理","postRankCode":"RANK0000000011","postrankTemplateUuid":"9f21928cbd44462b97e4eeecc0b15d1f","rate":0,"sheetRow":0,"sortFieldName":"createTime","sortType":"desc","storeNo":"1001","updateOpeTime":"2019-09-24 15:28:22","updateOper":"0000000065123b530165125c69b20006","userType":"02","userTypeStr":"直属经纪人","uuid":"00000000674d7d4a01674de0f3b00000","workType":"1"}]},"message":"成功","msg":"成功"}
+                    ajax.getPostCodeList().then(function (res) {
+                        console.log(res)
+                    })
+                },
+                getPostCodeDetail() {
+                    // {"code":"0","data":{"PostRank":{"createTime":"2018-11-15 22:41:28","defaultState":"","defaultStateStr":"","delFlag":"0","directorState":"1","directorStateStr":"销售类","mapCondition":{},"note":"","officialState":"0","postLevel":"1","postName":"业务总监","postRankCode":"12312","postrankTemplateUuid":"9f21928cbd44462b97e4eeecc0b15d1f","rate":0,"sheetRow":0,"sortFieldName":"createTime","sortType":"desc","storeNo":"1001","updateOpeTime":"2019-09-24 19:26:33","updateOper":"0000000065123b530165125c69b20006","userType":"02","userTypeStr":"直属经纪人","uuid":"0000000067179b36016717d1dab90000","workType":"1"}},"message":"成功","msg":"成功"}
+                    ajax.getPostCodeDetail({ uuid: '0000000067179b36016717d1dab90000' }).then(function (res) {
+                        console.log(res)
+                    })
+                },
+                getIntroducerUuid() {
+                    // 推荐人 cffccee96ff989f1016ff99278590004
+                    // {"code":"0","data":{"flag":false},"message":"成功","msg":"成功"}
+                    ajax.getIntroducerUuid().then(function (res) {
+                        console.log(res)
+                    })
+                },
+                thirdAgentIncreaseApply() {
+                    ajax.thirdAgentIncreaseApply().then(function (res) {
+                        console.log(res)
+                    })
+                },
+                thirdAuditInfo() {
+                    ajax.thirdAuditInfo().then(function (res) {
+                        console.log(res)
+                    })
+                },
+            }
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组织架构</title>
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/common.js?v=1.01"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+    <style>
+        .step-label-group {
+            padding: 10px 6px;
+            font-size: 0;
+        }
+
+        .step-label-group>li {
+            position: relative;
+            display: inline-block;
+            width: 25%;
+        }
+
+        .step-label-group>li+li:after {
+            content: '';
+            position: absolute;
+            left: -4px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: url(../../img/team/angle-right-color.png) no-repeat center center/contain;
+            width: 8px;
+            height: 8px;
+        }
+
+        .step-label-item {
+            width: 68px;
+            text-align: center;
+            background-color: #fff;
+            border-radius: 4px;
+            padding: 4px 4px;
+            font-size: 12px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            margin: auto;
+            border: 1px solid #d8d8d8;
+        }
+
+        .step-content {
+            overflow: hidden;
+        }
+
+        .step-content-group {
+            margin-top: 20px;
+            position: relative;
+            height: calc(100vh - 120px);
+            transition: transform 200ms ease;
+        }
+
+        .step-content-group>li {
+            position: absolute;
+            top: 0;
+            width: 48vw;
+            height: inherit;
+            background-color: #fff;
+            border-radius: 6px;
+            padding: 10px 12px;
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        .option-item {
+            position: relative;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding-right: 20px;
+            font-size: 14px;
+        }
+
+        .option-item_link:after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: url(../../img/team/angle-right.png) no-repeat center;
+            width: 12px;
+            height: 12px;
+        }
+
+        .date-filter {
+            position: fixed;
+            bottom: 0;
+            border-top: 1px solid #e8e0e0;
+            background-color: #fff;
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .date-filter>input {
+            width: 80px;
+        }
+
+        .date-filter>img {
+            width: 6px;
+        }
+
+        .van-overlay {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="step-label">
+            <ul class="step-label-group">
+                <template v-for="(item,key) in stepLabel">
+                    <li :key="key" @click="scrollContent(key)">
+                        <div class="step-label-item">
+                            {{item.agencyName}}
+                        </div>
+                    </li>
+                </template>
+            </ul>
+        </div>
+        <div class="step-content">
+            <ul class="step-content-group" :style="{transform:'translateX(-'+(3 + stepIndex*(itemLeft+8))+'vw)'}">
+                <template v-for="(item,key) in stepContent">
+                    <li :key="key" :style="{left:(2 + (itemLeft+8)*key)+'vw'}">
+                        <template v-for="(iitem,kkey) in item">
+                            <div @click="clickItem(key,iitem)" class="option-item"
+                                :class="{'option-item_link':iitem.isEnd === '0'}" :key="key">{{iitem.agencyName}}
+                            </div>
+                        </template>
+                    </li>
+                </template>
+            </ul>
+        </div>
+        <div class="date-filter" @click="showPicker = true">
+            统计日期：<input :value="CHdate" readonly />
+            <img src="../../img/team/angle-right-color.png">
+        </div>
+
+        <van-overlay :show="loading">
+            <van-loading vertical color="#fff">加载中...</van-loading>
+        </van-overlay>
+        <vant-date-picker v-model="showPicker" :currentdate.sync="currentDate" type="year-month"></vant-date-picker>
+    </div>
+    <script src="../../js/vueComponents/vantDatePicker.js"></script>
+    <script src="../../js/common_utils.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    showPicker: false,
+                    currentDate: new Date(),
+                    loading: false,
+                    stepLabel: [
+                        { agencyName: '总公司' },
+                    ],
+                    stepContent: [[{ agencyName: '总公司' }], []],
+                    stepIndex: 0,
+                    itemLeft: 46
+                }
+            },
+            created() {
+                this.getFirstAgencys()
+                // this.getNextAgencys()
+            },
+            computed: {
+                CHdate: function () {
+                    return formatDate(this.currentDate, 'yyyy-MM', true)
+                },
+            },
+            methods: {
+                clickItem: function (parentKey, item) {
+                    if (parentKey === 0 || item.isEnd === '1' || this.loading) return;
+                    this.stepLabel.push(item);
+                    this.getNextAgencys(parentKey, item);
+                },
+                scrollContent: function (k) {
+                    if (k === 3) return;
+                    this.stepIndex = k;
+                    this.stepLabel = this.stepLabel.slice(0, k + 1)
+                },
+                // 组织架构第一层
+                getFirstAgencys: function () {
+                    var that = this;
+                    var res = { "code": "0", "data": { "Agencys": [{ "agencyName": "测试", "agencyNo": "10001", "isEnd": "0", "mapCondition": {}, "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }] }, "message": "成功", "msg": "成功" };
+                    if (res.code === '0') {
+                        that.stepContent[1] = res.data.Agencys
+                    }
+                    return;
+                    this.loading = true
+                    ajax.getFirstAgencys().then(function (res) {
+                        console.log(res)
+                        that.loading = false
+                    }).catch(function () {
+                        that.loading = false
+                    })
+                },
+                // 组织架构下一层
+                getNextAgencys: function (key, iitem) {
+                    var that = this;
+                    that.stepContent[key + 1] = [];
+                    this.loading = true
+                    setTimeout(function () {
+                        var res = { "code": "0", "data": { "Agencys": [{ "agencyName": "测试1", "agencyNo": "10001", "isEnd": "1", "mapCondition": {}, "sheetRow": 0, "sortFieldName": "createTime", "sortType": "desc" }] }, "message": "成功", "msg": "成功" };
+                        if (res.code === '0') {
+                            that.stepContent[key + 1] = res.data.Agencys
+                            that.stepIndex++;
+                        }
+                        that.loading = false
+                    }, 800)
+                    return;
+                    this.loading = true
+                    ajax.getNextAgencys({ agencyNo: '1111' }).then(function (res) {
+                        console.log(res)
+                        that.loading = false
+                    }).catch(function () {
+                        that.loading = false
+                    })
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

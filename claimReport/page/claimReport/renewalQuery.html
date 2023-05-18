@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>续期查询</title>
+    <meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name="viewport" id="viewport" />
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="keywords" content="">
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <link rel="stylesheet" type="text/css" href="../../css/new-common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/customer-form.css" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+    <style>
+        html,
+        body {
+            overflow-x: hidden;
+        }
+        
+        body {
+            color: #333;
+        }
+        
+        .no-list {
+            background-color: transparent !important;
+        }
+        
+        .filter-view {
+            position: relative;
+            border-bottom: 0.02rem solid #f1f1f1;
+        }
+        
+        .filter-group {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            height: 1rem;
+            padding: 0 0.2rem;
+        }
+        
+        .scroll-view {
+            height: calc(100vh - 1rem);
+            overflow-x: hidden;
+            padding: 0 0.24rem;
+        }
+        
+        .filter-block {
+            position: relative;
+            background-color: #fff;
+            height: 1.08rem;
+            font-size: 0.34rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .filter-block>input {
+            width: 100%;
+            text-align: center;
+        }
+        
+        .filter-group>li {
+            flex: 1;
+            text-align: center;
+            background-color: #fff;
+            border-radius: 0.1rem;
+        }
+        
+        .filter-group>li+li {
+            margin-left: 0.2rem;
+        }
+        
+        .filter-group .filter-item {
+            position: relative;
+            height: 0.7rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .filter-group .filter-item::after {
+            content: '';
+            position: absolute;
+            right: 0.16rem;
+            top: 38%;
+            width: 0.14rem;
+            height: 0.14rem;
+            border: 1px solid #000;
+            transform: translate(0, -50%) rotate(-45deg);
+            border-color: transparent transparent #333 #333;
+        }
+        
+        .filter-item>input {
+            width: 100%;
+            text-align: center;
+            font-size: 0.28rem;
+            padding: 0.2rem 0;
+        }
+        
+        .card-group .card-item {
+            position: relative;
+            background-color: #fff;
+            border-radius: 0.12rem;
+            margin-top: 0.2rem;
+        }
+        
+        .card-group .card-item-top {
+            display: flex;
+            align-items: center;
+            line-height: 1.8;
+            overflow: hidden;
+        }
+        
+        .card-group .card-item-top,
+        .card-group .card-item-bottom {
+            padding: 0.16rem 0.2rem;
+        }
+        
+        .card-group .card-title {
+            flex: 1;
+            line-height: 1.8;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            font-size: 0.32rem;
+        }
+        
+        .card-group .card-logo {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 0.2rem;
+        }
+        
+        .card-group .card-date {
+            font-size: 0.24rem;
+            color: #D63131;
+        }
+        
+        .card-group .card-state {
+            position: absolute;
+            right: 0;
+            top: -0.04rem;
+            width: 1.3rem;
+            height: 0.65rem;
+            text-align: center;
+            line-height: 0.65rem;
+            font-size: 0.28rem;
+            color: #fff;
+            text-indent: .5em;
+        }
+        
+        .card-group .card-state.state1 {
+            background: url(../../img/state1.png) center center/contain no-repeat;
+        }
+        
+        .card-group .card-state.state2 {
+            background: url(../../img/state2.png) center center/contain no-repeat;
+        }
+        
+        .card-group .card-state.state3 {
+            background: url(../../img/state3.png) center center/contain no-repeat;
+        }
+        
+        .card-group .card-item-bottom {
+            border-top: 0.02rem solid #CCCCCC;
+            position: relative;
+        }
+        
+        .card-group .card-info-group {
+            font-size: 0;
+            line-height: 1.8;
+        }
+        
+        .card-group .card-info-group>li {
+            font-size: 0.24rem;
+            display: inline-flex;
+            width: 100%;
+        }
+        
+        .card-group .card-info-group .w50 {
+            width: 50%;
+        }
+        
+        .card-group .card-info-group .label {
+            flex: 0 0 1.15rem;
+            text-align: right;
+            color: #999;
+            margin-right: 0.2rem;
+        }
+        
+        .card-group .card-info-group .value {
+            flex: 1;
+            color: #1A1A1A;
+            word-break: break-all;
+        }
+        
+        .state-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            font-size: 0.32rem;
+        }
+        
+        .state-group>li.active {
+            color: #1B92FF;
+        }
+        
+        .state-group>li.active:after {
+            opacity: 1 !important;
+        }
+        
+        .state-group>li {
+            position: relative;
+            flex: 1;
+            text-align: center;
+            height: 0.92rem;
+            line-height: 0.92rem;
+        }
+        
+        .state-group>li:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0.8rem;
+            height: 0.06rem;
+            border-radius: 0.3rem;
+            background-color: #1B92FF;
+            opacity: 0;
+        }
+        
+        .filter-block:before {
+            content: '';
+            position: absolute;
+            top: 54%;
+            bottom: 0;
+            width: 0;
+            height: 0;
+            border: 0.12rem solid;
+            border-color: #000 transparent transparent transparent;
+            transform: translateY(-50%);
+            right: 2.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="filter-view">
+            <ul class="filter-group">
+                <li>
+                    <div class="filter-item">
+                        <!-- 选择日期 -->
+                        <input type="text" v-model="currentDateCH" readonly @click="filters.showDatePicker = true" />
+                    </div>
+                </li>
+                <li>
+                    <div class="filter-item">
+                        <!-- 日期排序 -->
+                        <input type="text" v-model="filters.dateSortColumn.text" readonly @click="filters.showDateSortPicker = true" />
+                    </div>
+                </li>
+                <li>
+                    <div class="filter-item">
+                        <!-- 续保类型 -->
+                        <input type="text" v-model="filters.renewalColumn.text" readonly @click="filters.renewalTypePicker = true" />
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="scroll-view" @scroll="scrollChange">
+            <ul class="card-group">
+                <template v-for="(item,key) in list.listData">
+                    <li class="card-item" :key="key">
+                        <div class="card-state"
+                            :class="{state1:item.state === '2',state2:item.state === '1',state3:item.state === '3'||item.state === '4'}">
+                            {{item.stateName}}
+                        </div>
+                        <div class="card-item-top">
+                            <div class="card-title">
+                                <img src="../../img/1.PNG" class="card-logo">
+                                {{item.productName}}
+                            </div>
+                        </div>
+                        <div class="card-item-bottom">
+                            <ul class="card-info-group">
+                                <li class="w50">
+                                    <div class="label">
+                                        投保人
+                                    </div>
+                                    <div class="value">
+                                        {{item.insured}}
+                                    </div>
+                                </li>
+                                <li class="w50">
+                                    <div class="label">
+                                        被保人
+                                    </div>
+                                    <div class="value">
+                                        {{item.holder}}
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="label">
+                                        保单号
+                                    </div>
+                                    <div class="value">
+                                        {{item.payPremium||0.00}}
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="label">
+                                        承保日期
+                                    </div>
+                                    <div class="value">
+                                       2021年4月28日
+                                    </div>
+                                </li>
+                                <li class="w50">
+                                    <div class="label">
+                                        续保日期
+                                    </div>
+                                    <div class="value">
+                                        2021年4月28日
+                                    </div>
+                                </li>
+                                <li class="w50">
+                                    <div class="label">
+                                        倒计时
+                                    </div>
+                                    <div class="value">
+                                       22天
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="label">
+                                        保费
+                                    </div>
+                                    <div class="value">
+                                        ￥{{item.payPremium||0.00}}
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </template>
+                <li class="no-list" v-if="list.loading">加载中...</li>
+                <li class="no-list" v-if="!list.loading&&list.end&&list.listData.length === 0">暂无数据</li>
+            </ul>
+        </div>
+        <vant-date-picker type="year-month" v-model="filters.showDatePicker" :currentdate.sync="filters.currentDate" @onconfirm="onConfirm"></vant-date-picker>
+        <vant-picker v-model="filters.showDateSortPicker" :columns="filters.dateSortColumns" :column.sync="filters.dateSortColumn" @onconfirm="onConfirm"></vant-picker>
+        <vant-picker v-model="filters.renewalTypePicker" :columns="filters.renewalColumns" :column.sync="filters.renewalColumn" @onconfirm="onConfirm"></vant-picker>
+    </div>
+    <script src="../../js/common_utils.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../js/vueComponents/vantDatePicker.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../js/vueComponents/vantPicker.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        var nowPage = 0;
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    list: {
+                        nowPage: 1,
+                        pageShow: 10,
+                        loading: false,
+                        end: false,
+                        listData: [],
+                    },
+                    filters: {
+                        currentDate: new Date(),
+                        showDatePicker: false,
+                        showDateSortPicker: false,
+                        dateSortColumns: [{
+                            text: '日期排序',
+                            value: '01'
+                        }, {
+                            text: '保费降序',
+                            value: '02'
+                        }],
+                        dateSortColumn: {
+                            text: '日期排序',
+                            value: '01'
+                        },
+                        showStateSortPicker: false,
+                        renewalTypePicker: false,
+                        renewalColumns: [{
+                            text: '待续保',
+                            value: '2'
+                        }, {
+                            text: '已续保',
+                            value: '3'
+                        }, {
+                            text: '已失效',
+                            value: '4'
+                        }],
+                        renewalColumn: {
+                            text: '待续保',
+                            value: '2'
+                        }
+                    },
+                }
+            },
+            computed: {
+                currentDateCH: function() {
+                    return formatDate(this.filters.currentDate, 'yyyy-MM', true)
+                }
+            },
+            created() {
+                this._applyList()
+            },
+            methods: {
+                // 滚动到底部
+                scrollChange: function(e) {
+                    var target = e.target
+                    if (target.scrollTop + target.offsetHeight >= target.scrollHeight) {
+                        this._applyList()
+                            //加载更多
+                    }
+                },
+                onSearch: function() {
+                    this.copySearchKey = this.searchKey
+                    this.onConfirm();
+                },
+                onConfirm: function() {
+                    this.list.nowPage = 1;
+                    this.list.end = false
+                    this.list.listData = []
+                    this._applyList()
+                },
+                _applyList: function() {
+                    if (this.list.loading || this.list.end) return;
+                    var that = this;
+                    this.list.loading = true
+                    setTimeout(function() {
+                        var result = that.setData(that.list.nowPage) //
+                        if (result.nowPage === 1) {
+                            if (result.rows.length === 0) {
+                                that.list.end = true
+                            }
+                            that.list.listData = result.rows
+                        } else {
+                            that.list.listData = that.list.listData.concat(result.rows)
+                        }
+                        that.list.loading = false
+                        that.list.nowPage++
+                    }, 500)
+
+                    return;
+
+                    // var param = {
+                    //     "nowPage": this.list.nowPage, //当前页数 必传
+                    //     "orderByType": this.filters.dateSortColumn.value, //排序类型：01:日期排序  02：保费降序 非必传
+                    //     "payCount": this.filters.payCountColumn.value, //缴费次数 非必传
+                    //     "searchDate": formatDate(that.filters.currentDate,
+                    //         'yyyy-MM'), //搜索日期  日期格式：2021-04 必传
+                    //     "searchKey": this.list.searchKey, //搜索关键词 非必传
+                    //     "state": this.filters.stateSortColumn.value, //状态   1:未收保单  2：实收保单 3：失效保单  4：终止保单 必传
+                    // }
+                    // this.list.loading = true
+                    // ajax.searchLifePolicyRenewals(param).then(function(res) {
+                    //     if (res.data.code === '0') {
+
+                    //         var result = res.data.data.pages // that.setData(that.list.nowPage) //
+                    //         if (that.list.nowPage === 1) {
+                    //             if (result.rows.length === 0) {
+                    //                 that.list.end = true
+                    //             } else {
+                    //                 that.list.listData = result.rows
+                    //             }
+                    //         } else {
+                    //             if (result.rows.length === 0) {
+                    //                 that.list.end = true
+                    //             } else {
+                    //                 that.list.listData = that.list.listData.concat(result.rows)
+                    //             }
+                    //         }
+                    //         that.list.nowPage++
+                    //     }
+                    //     that.list.loading = false
+                    // }).catch(function() {
+                    //     that.list.loading = false
+                    //     that.list.end = true
+                    // })
+                },
+                setData: function(nowPage) {
+                    var result = [],
+                        demo = {
+                            "holder": "李四", //被保人
+                            "insured": "李四", //投保人
+                            "payCount": "1", //缴费次数
+                            "payPremium": "50.0", //保费
+                            "policyNo": "1111111111", //保单号
+                            "productName": "河南个意险", //产品名称
+                            "showDate": "2021-04-08", //展示日期
+                            "stateName": "已中止", //状态
+                            "invalidDay": "距离失效还有28天" //失效提示
+                        }
+                    for (var i = 0; i < 10; i++) {
+                        demo['state'] = String(Math.floor(Math.random() * 3 + 1))
+                        result.push(demo)
+                    }
+                    console.log(result)
+                    return {
+                        rows: result,
+                        nowPage: nowPage,
+                        pageShow: 10
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

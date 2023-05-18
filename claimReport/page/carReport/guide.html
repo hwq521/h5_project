@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>车辆报案</title>
+    <meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name="viewport"
+        id="viewport" />
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="keywords" content="">
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/common.js?v=1.01"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+</head>
+<style type="text/css">
+    .guide-bg {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        background: url(../../img/guide_bg.png) center top/cover no-repeat;
+    }
+
+    .guide-btn {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 1rem;
+        width: 4rem;
+        height: 0.94rem;
+        border-radius: 0.48rem;
+    }
+
+    .guide-btn-bg {
+        position: relative;
+        width: inherit;
+        height: inherit;
+        background: url(../../img/guide_btn.png) center top/contain no-repeat;
+        border-radius: inherit;
+    }
+
+    .guide-btn-bg:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: inherit;
+        opacity: 0;
+    }
+
+    .guide-btn-bg:active:after {
+        opacity: 1 !important;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <div class="guide-bg">
+            <div class="guide-btn">
+                <div class="guide-btn-bg" @click="jump"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+
+                }
+            },
+            methods: {
+                jump: function () {
+                    location.href = './reportList.html'
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

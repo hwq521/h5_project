@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拼长图</title>
+</head>
+
+<body>
+    <label id="uploadInput" style="border: 1px solid #333; cursor: pointer; padding: 5px 20px;">
+        点击选择图片
+    </label>
+
+    <div id="imageBox"></div>
+
+    <script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script>
+        const files = ['img/icon1.jpg', 'img/icon2.jpg', 'img/icon3.jpg']; // 提供图片数组路径
+        // 拼出来的图片的宽度
+        const width = 300;
+        // 拼出来的图片的质量，0-1之间，越大质量越好
+        const encoderOptions = 0.5;
+        // 图片选择输入框
+        const uploadInput = document.getElementById('uploadInput');
+        // 图片展示框
+        const imageBox = document.getElementById('imageBox');
+
+        // 给图片选择输入框添加click监听事件
+        uploadInput.addEventListener('click', event => {
+            filesToInstances(files, instances => {
+                drawImages(instances, finalImageUrl => {
+                    imageBox.innerHTML = `<img src=${finalImageUrl}><a download href=${finalImageUrl}>点击下载</a>`;
+                });
+            });
+        });
+
+        /**
+         * 根据图片路径拿到图片实例
+         * @param files 图片路径数组
+         * @param callback
+         */
+        const filesToInstances = (files, callback) => {
+            const length = files.length; // 图片路径个数
+            let instances = []; // 文件实例数组
+            let finished = 0; // 转换成功个数
+
+            // 遍历图片路径数组
+            files.forEach((file, index) => {
+                const image = new Image();
+                image.src = file; // 赋值图片路径
+                image.onload = () => {
+                    // 图片实例化成功后存起来
+                    instances[index] = image;
+                    finished++;
+                    if (finished === length) { // 如果全部完成转换，调用回调函数
+                        callback(instances);
+                    }
+                }
+            });
+        }
+
+        /**
+         * 拼图
+         * @param images 图片实例数组
+         * @param callback
+         */
+        const drawImages = (images, callback) => {
+            const heights = images.map(item => width / item.width * item.height); // 计算获取每个图片文件根据指定width后的高度
+            const canvas = document.createElement('canvas'); // 创建canvas元素
+            canvas.width = width; // canvas宽度
+            canvas.height = heights.reduce((total, current) => total + current); // 计算heights数组元素相加后的总和为canvas的高度
+            const context = canvas.getContext('2d'); // 创建渲染
+            let y = 0; // canvas Y轴坐标
+
+            // 遍历图片实例数组
+            images.forEach((item, index) => {
+                const height = heights[index];
+                context.drawImage(item, 0, y, width, height);
+                y += height; // Y轴坐标加上上一张图片高度
+            });
+
+            // canvas数据放到回调函数
+            callback(canvas.toDataURL('image/jpeg', encoderOptions));
+        }
+    </script>
+</body>
+
+</html>

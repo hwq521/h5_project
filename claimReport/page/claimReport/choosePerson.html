@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>车辆报案</title>
+    <meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name="viewport"
+        id="viewport" />
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="keywords" content="">
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <link rel="stylesheet" href="../../css/new-common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/customer-form.css" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/common.js?v=1.01"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+    <style>
+        .cell-icon {
+            width: 0.4rem;
+            height: 0.4rem;
+            margin-right: 0.2rem;
+        }
+
+        .form-group .van-cell-group {
+            background-color: transparent !important;
+        }
+
+        .form-group .van-cell {
+            border-radius: 0.1rem;
+        }
+
+        .form-group .van-cell__title {
+            flex: 0 0 1.6rem !important;
+        }
+
+        .form-checkbox {
+            margin-bottom: 0.24rem;
+            border-radius: 0.08rem;
+        }
+
+        .form-checkbox>label {
+            display: block;
+            width: 100%;
+            font-size: 0;
+        }
+
+        .form-checkbox-item {
+            display: flex;
+            color: #1A1A1A;
+            font-size: 0.24rem;
+        }
+
+        .form-checkbox-item .form-checkbox_lef {
+            position: relative;
+            flex: 0 0 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-checkbox-item .form-checkbox_lef:after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 0.02rem;
+            height: 100%;
+            background-color: #ccc;
+        }
+
+        .form-checkbox-item .form-checkbox-icon {
+            position: relative;
+            width: 0.32rem;
+            height: 0.32rem;
+            border-radius: 50%;
+            border: 0.02rem solid #ccc;
+            background-color: transparent;
+            transition: background-color 400ms;
+        }
+
+        .form-checkbox .input-checkbox {
+            position: absolute;
+        }
+
+        .form-checkbox-item .form-checkbox-icon:after {
+            content: '';
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            width: 40%;
+            height: 16%;
+            border: 0.02rem solid;
+            border-color: transparent transparent #fff #fff;
+        }
+
+        .input-checkbox:checked+.form-checkbox-item .form-checkbox-icon {
+            background-color: #1B92FF;
+            border-color: #1B92FF;
+        }
+
+        .form-checkbox-item .form-checkbox_rig {
+            flex: 1;
+            padding: 0.24rem 0;
+            padding-left: 0.24rem;
+        }
+
+        .form-checkbox-item .checkbox-info-group>li {
+            display: flex;
+            line-height: 1.8;
+        }
+
+        .form-checkbox-item .checkbox-info-group .label {
+            color: #999;
+            width: 1.4rem;
+        }
+    </style>
+    </ohead>
+
+<body>
+    <div id="app">
+        <div class="form-group">
+            <van-cell-group>
+                <van-cell title="保险公司" :value="company.current.text||'请选择保险公司'" center @click="company.show = true"
+                    is-link>
+                    <template #icon>
+                        <img class="cell-icon" src="../../img/report_icon_9.png">
+                    </template>
+                </van-cell>
+            </van-cell-group>
+        </div>
+        <div class="form-group">
+            <van-cell-group>
+                <van-cell title="产品名称" :value="product.current.text||'请选择产品名称'" center @click="product.show = true"
+                    is-link>
+                    <template #icon>
+                        <img class="cell-icon" src="../../img/report_icon_13.png">
+                    </template>
+                </van-cell>
+            </van-cell-group>
+        </div>
+        <ul class="form-group">
+            <li class="form-checkbox">
+                <label>
+                    <input type="checkbox" class="input-checkbox" checked>
+                    <div class="form-checkbox-item">
+                        <div class="form-checkbox_lef">
+                            <div class="form-checkbox-icon"></div>
+                        </div>
+                        <div class="form-checkbox_rig">
+                            <ul class="checkbox-info-group">
+                                <li>
+                                    <div class="label">投保号</div>
+                                    <div class="value">P3489023840</div>
+                                </li>
+                                <li>
+                                    <div class="label">投保人</div>
+                                    <div class="value">P3489023840</div>
+                                </li>
+                                <li>
+                                    <div class="label">被保人</div>
+                                    <div class="value">P3489023840</div>
+                                </li>
+                                <li>
+                                    <div class="label">承保日期</div>
+                                    <div class="value">P3489023840</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </label>
+            </li>
+        </ul>
+        <div class="btn-form-area">
+            <button class="btn btn-l btn-primary" @click="jump">下一步</button>
+        </div>
+        <vant-picker v-model="company.show" :columns="company.list" :column.sync="company.current"></vant-picker>
+        <vant-picker v-model="product.show" :columns="product.list" :column.sync="product.current"></vant-picker>
+    </div>
+    <script src="../../js/vueComponents/vantPicker.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    company: {
+                        show: false,
+                        current: {},
+                        list: [{
+                            text: '公司a',
+                            value: 'a'
+                        }, {
+                            text: '公司b',
+                            value: 'b'
+                        }, {
+                            text: '公司c',
+                            value: 'c'
+                        }, {
+                            text: '公司d',
+                            value: 'd'
+                        }, {
+                            text: '公司e',
+                            value: 'e'
+                        },]
+                    },
+                    product: {
+                        show: false,
+                        current: {},
+                        list: [{
+                            text: '产品a',
+                            value: 'a'
+                        }, {
+                            text: '产品b',
+                            value: 'b'
+                        }, {
+                            text: '产品c',
+                            value: 'c'
+                        }, {
+                            text: '产品d',
+                            value: 'd'
+                        }, {
+                            text: '产品e',
+                            value: 'e'
+                        },]
+                    },
+                }
+            },
+            methods: {
+                jump: function () {
+                    location.href = './step1.html'
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

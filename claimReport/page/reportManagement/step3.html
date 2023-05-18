@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>报案单管理</title>
+    <meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name="viewport" id="viewport" />
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="keywords" content="">
+    <link rel="stylesheet" href="../../css/reset.css?v=20201225" />
+    <link rel="stylesheet" type="text/css" href="../../css/new-common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/customer-form.css" />
+    <script src="../../js/zepto.min.js"></script>
+    <script src="../../js/base.js?v=20200915"></script>
+    <script src="../../js/showText.js"></script>
+    <script src="../../js/init_750.js"></script>
+    <link rel="stylesheet" href="../../css/vant.css" />
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
+    <script src="../../js/axios/package-axios.js"></script>
+    <style>
+        .form-upload-group {
+            font-size: 0;
+            width: 100%;
+        }
+        
+        .form-upload:before {
+            left: 0 !important;
+            right: 0 !important;
+        }
+        
+        .form-upload-group>li {
+            width: calc((100% - (12px * 3)) / 4);
+            display: inline-block;
+            margin-bottom: 12px;
+            margin-right: 12px;
+        }
+        
+        .form-upload-group>li:nth-child(4n) {
+            margin-right: 0;
+        }
+        
+        .form-upload-group .form-upload-add {
+            border: 1px dashed #666;
+        }
+        
+        .form-upload-group .form-upload-add,
+        .form-upload-group .form-upload-item {
+            background-color: #f8f9fb;
+            width: 100%;
+            height: 60px;
+            border-radius: 4px;
+            position: relative;
+            box-sizing: border-box;
+        }
+        
+        .form-upload-group .form-upload-add>img,
+        .form-upload-group .form-upload-item>img {
+            border-radius: inherit;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: initial;
+        }
+        
+        .form-upload .upload-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #fff;
+        }
+        
+        .form-upload .upload-close-icon::after {
+            content: 'x';
+        }
+        
+        .form-upload .upload-close-icon {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 22px;
+            height: 22px;
+            background: url(../../img/close.png) #fff center center/cover no-repeat;
+            border-radius: 50%;
+        }
+        
+        .upload-form {
+            position: absolute;
+            top: -999999px;
+            right: -99999px;
+            opacity: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <step :step="3"></step>
+        <ul class="form-group">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_8.png" class="form-title-icon">
+                <div class="form-title">上传图片示例</div>
+            </li>
+            <li class="form-item form-upload">
+                <ul class="form-upload-group">
+                    <template v-for="(item,key) in exampleList">
+                        <li :key="key">
+                            <div class="form-upload-item">
+                                <img :src="item" />
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+            </li>
+        </ul>
+        <ul class="form-group">
+            <li class="form-item form-item-center">
+                <img src="../../img/report_icon_8.png" class="form-title-icon">
+                <div class="form-title">请上传图片</div>
+            </li>
+            <li class="form-item form-upload">
+                <ul class="form-upload-group">
+                    <template v-for="(item,key) in uploadList">
+                        <li :key="key">
+                            <div class="form-upload-item">
+                                <img :src="item.url||item.local" />
+                                <div class="upload-layer-container" v-if="item.loading||item.error">
+                                    <div class="upload-layer" v-if="item.error">{{item.errorMsg}}</div>
+                                    <div class="upload-layer" v-else>已上传{{item.percent}}%</div>
+                                </div>
+                                <div class="upload-close-icon" @click="delImg(key)"></div>
+                            </div>
+                        </li>
+                    </template>
+                    <li>
+                        <div class="form-upload-add" @click="triggerUpload">
+                            <img src="../../img/add-pic.jpg" />
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <div class="btn-form-area">
+            <button class="btn btn-l btn-primary">下一步</button>
+        </div>
+        <form class="upload-form" ref="upload-form">
+            <input type="file" ref="upload-input-file" multiple @change="uploadChange">
+        </form>
+    </div>
+    <script src="../../js/vueComponents/step.component.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    exampleList: [
+                        'https://apptest.hb-online.cn/group1/M00/00/82/rBGxTGCAGrWAdSC9AADtFKzdy8Q353.jpg',
+                        'https://apptest.hb-online.cn/group1/M00/00/82/rBGxTGCAGrWAdSC9AADtFKzdy8Q353.jpg',
+                        'https://apptest.hb-online.cn/group1/M00/00/82/rBGxTGCAGrWAdSC9AADtFKzdy8Q353.jpg',
+                        'https://apptest.hb-online.cn/group1/M00/00/82/rBGxTGCAGrWAdSC9AADtFKzdy8Q353.jpg',
+                        'https://apptest.hb-online.cn/group1/M00/00/82/rBGxTGCAGrWAdSC9AADtFKzdy8Q353.jpg',
+                        'https://apptest.hb-online.cn/group1/M00/00/82/rBGxTGCAGrWAdSC9AADtFKzdy8Q353.jpg',
+                        'https://apptest.hb-online.cn/group1/M00/00/82/rBGxTGCAGrWAdSC9AADtFKzdy8Q353.jpg',
+                        'https://apptest.hb-online.cn/group1/M00/00/82/rBGxTGCAGrWAdSC9AADtFKzdy8Q353.jpg'
+                    ],
+                    uploadList: []
+                }
+            },
+            methods: {
+                delImg: function(k) {
+                    this.uploadList.splice(k, 1)
+                },
+                triggerUpload: function() {
+                    this.$refs['upload-input-file'].click()
+                },
+                uploadChange: async function(e) {
+                    var files = e.target.files;
+                    var file = null;
+                    if (files.length === 0) return;
+                    for (var i = 0; i < files.length; i++) {
+                        file = files[i];
+                        this.uploadList.push({
+                            fileUuid: '', // 图片uuid
+                            url: '', // 线上链接
+                            local: URL.createObjectURL(file), // 本地缓存图片
+                            loading: true, // 加载蒙版层
+                            error: false, // 是否错误
+                            errorMsg: '', // 错误信息
+                            percent: 0 // 上传进度
+                        })
+                        await this._applyUpload(file)
+                    }
+                    this.$refs['upload-form'].reset()
+                    console.log(this.uploadList)
+                },
+                _applyUpload: function(file) {
+                    var that = this;
+                    return new Promise(function(resolve, reject) {
+                        var lastKey = that.uploadList.length - 1;
+                        ajax.uploadImg(file, function(e) {
+                            // 上传图片返回的进度百分比(正整数)
+                            that.uploadList[lastKey].percent = e;
+                        }).then(function(res) {
+                            if (res.data.code === '0') {
+                                var result = res.data.data
+                                that.uploadList[lastKey].url = result.imgUrl
+                                that.uploadList[lastKey].fileUuid = result.fileUuid
+                            } else {
+                                that.uploadList[lastKey].error = true
+                                that.uploadList[lastKey].errorMsg = '上传失败'
+                            }
+                            that.uploadList[lastKey].loading = false
+                            resolve()
+                        }).catch(function() {
+                            that.uploadList[lastKey].errorMsg = '上传错误'
+                            that.uploadList[lastKey].error = true
+                            that.uploadList[lastKey].loading = false
+                            resolve()
+                        })
+                    })
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
